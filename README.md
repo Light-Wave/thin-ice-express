@@ -1,14 +1,22 @@
 # Thin Ice Express 🚂❄️
 
-A 2D game built with **Godot 4**.
+A high-speed physics-based survival game built with **Godot 4**.
 
 ---
 
-## 📖 About the Game
+## 📖 Game Concept
 
-*Thin Ice Express* is a fast-paced game where players navigate a train/locomotive across hazardous icy tracks. Balance speed and momentum while avoiding structural failures and obstacles along the route.
+> *The train has derailed and is now sliding uncontrollably across dangerous, cracking ice!*
 
-> *Note: This project is currently in active early development.*
+In **Thin Ice Express**, you must navigate a runaway train across tilting, treacherous ice fields at breakneck speeds. 
+
+### 🎮 Core Gameplay Mechanics
+* **Sliding & Tilting Ice:** The surface beneath the train is constantly cracking and tilting. Shift weight and balance carefully to prevent falling into the freezing water.
+* **Sleeping Passengers ("Bump-o-Meter"):** Maintain a smooth ride! Excessive bumps, rough landings, or collisions will wake up the sleeping passengers onboard.
+* **High-Speed Obstacle Course:** Dodge ice hummocks, rocks, and wide chasms while the train speeds forward out of control.
+
+### 🏆 Objective
+Survive the hazardous ice run and reach safety without plunging into the freezing depths or waking up your sleeping passengers!
 
 ---
 
