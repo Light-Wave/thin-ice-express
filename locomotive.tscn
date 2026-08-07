@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dh3jjixd5xt0b"]
+
+[ext_resource type="Script" uid="uid://ltf6v0ij7g0n" path="res://locomotive.gd" id="1_us4ex"]
+
+[node name="Locomotive" type="CharacterBody2D" unique_id=2044510754]
+script = ExtResource("1_us4ex")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=633398168]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2102978099]
