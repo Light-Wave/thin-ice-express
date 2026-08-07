@@ -1,3 +1,5 @@
+extends CharacterBody2D
+
 @export var acceleration := 200.0
 @export var max_speed := 500.0
 @export var braking := 300.0
