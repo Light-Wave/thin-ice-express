@@ -148,7 +148,6 @@ func _on_body_entered(body: Node2D) -> void:
 			if body.has_method("apply_passenger_bump"):
 				body.apply_passenger_bump(25.0, "SPLASH WATER!")
 		else:
-			advance_crack()
 			if body.has_method("apply_passenger_bump"):
 				body.apply_passenger_bump(8.0, "ICE BUMP!")
 

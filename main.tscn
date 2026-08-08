@@ -1,30 +1,30 @@
 [gd_scene format=3 uid="uid://cgqrt7f4qnroq"]
 
-[ext_resource type="PackedScene" uid="uid://b8901234bg" path="res://background.tscn" id="1_bg"]
+[ext_resource type="PackedScene" uid="uid://caa01234bg" path="res://background.tscn" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
-[ext_resource type="PackedScene" uid="uid://7pqr8mfmynly" path="res://wagon.tscn" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://b3u5ixl45n0e3" path="res://wagon.tscn" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://cfgfx5atenmgv" path="res://passenger_ui.tscn" id="4_passenger"]
-[ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
-[ext_resource type="PackedScene" uid="uid://e8901234lvl" path="res://level_manager.tscn" id="6_lvl"]
-[ext_resource type="PackedScene" uid="uid://s8901234nav" path="res://station_navigation.tscn" id="7_nav"]
-[ext_resource type="PackedScene" uid="uid://c8901234complete" path="res://level_complete_ui.tscn" id="8_complete"]
-[ext_resource type="PackedScene" uid="uid://g8901234geomap" path="res://geo_map.tscn" id="9_geomap"]
+[ext_resource type="PackedScene" uid="uid://0qlf4xokbsuv" path="res://ice_generator.tscn" id="5_icegen"]
+[ext_resource type="PackedScene" uid="uid://faa01234lvl" path="res://level_manager.tscn" id="6_lvl"]
+[ext_resource type="PackedScene" uid="uid://taa01234nav" path="res://station_navigation.tscn" id="7_nav"]
+[ext_resource type="PackedScene" uid="uid://dav11w00banq5" path="res://level_complete_ui.tscn" id="8_complete"]
+[ext_resource type="PackedScene" uid="uid://ci4x3n12xc712" path="res://geo_map.tscn" id="9_geomap"]
 
 [node name="main" type="Node2D" unique_id=508355250]
 
-[node name="GameBackground" parent="." instance=ExtResource("1_bg")]
+[node name="GameBackground" parent="." unique_id=417246233 instance=ExtResource("1_bg")]
 
-[node name="LevelManager" parent="." instance=ExtResource("6_lvl")]
+[node name="LevelManager" parent="." unique_id=729746653 instance=ExtResource("6_lvl")]
 
 [node name="PassengerUI" parent="." unique_id=107121300 instance=ExtResource("4_passenger")]
 
-[node name="StationNavigation" parent="." instance=ExtResource("7_nav")]
+[node name="StationNavigation" parent="." unique_id=1108302212 instance=ExtResource("7_nav")]
 
-[node name="GeoMap" parent="." instance=ExtResource("9_geomap")]
+[node name="GeoMap" parent="." unique_id=105106593 instance=ExtResource("9_geomap")]
 
-[node name="LevelCompleteUI" parent="." instance=ExtResource("8_complete")]
+[node name="LevelCompleteUI" parent="." unique_id=1886076734 instance=ExtResource("8_complete")]
 
-[node name="IceGenerator" parent="." instance=ExtResource("5_icegen")]
+[node name="IceGenerator" parent="." unique_id=847437884 instance=ExtResource("5_icegen")]
 
 [node name="Train" type="Node" parent="." unique_id=1287673036]
 

@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://0kvwqc614dyo"]
+[gd_scene format=3 uid="uid://0kvwqc614dyo"]
 
-[ext_resource type="Script" uid="uid://bclujus1vpa18" path="res://ice_tile.gd" id="1_icetile"]
+[ext_resource type="Script" uid="uid://iy776s243fun" path="res://ice_tile.gd" id="1_icetile"]
 [ext_resource type="Texture2D" uid="uid://m31cfapo1gay" path="res://icon.svg" id="2_icon"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_icetile"]
