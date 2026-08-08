@@ -11,6 +11,10 @@ var station_position: Vector2 = Vector2.ZERO
 var start_distance: float = 1500.0
 var level_manager: Node
 
+# High Contrast Dark Font Colors
+const COLOR_TEXT_DARK := Color(0.06, 0.12, 0.24, 1.0) # Deep Navy
+const COLOR_TEXT_GOLD := Color(0.7, 0.5, 0.0, 1.0)    # Dark Gold
+
 @onready var distance_bar: ProgressBar = $Control/MarginContainer/VBoxContainer/ProgressBar
 @onready var distance_label: Label = $Control/MarginContainer/VBoxContainer/DistanceLabel
 @onready var minimap_panel: Control = $Control/MinimapPanel
@@ -19,6 +23,11 @@ var level_manager: Node
 func _ready() -> void:
 	player_train = get_node_or_null("../Locomotive") as Node2D
 	level_manager = get_node_or_null("../LevelManager")
+	
+	if distance_label:
+		distance_label.add_theme_color_override("font_color", COLOR_TEXT_DARK)
+		distance_label.add_theme_color_override("font_outline_color", Color.WHITE)
+		distance_label.add_theme_constant_override("outline_size", 4)
 	
 	if player_train:
 		_setup_station(player_train.global_position)
@@ -43,11 +52,11 @@ func _process(_delta: float) -> void:
 	if distance_label:
 		if dist <= 80.0:
 			distance_label.text = "🚉 STATION ARRIVED! Level Complete!"
-			distance_label.modulate = Color.GOLD
+			distance_label.add_theme_color_override("font_color", COLOR_TEXT_GOLD)
 			station_reached.emit(1)
 		else:
 			distance_label.text = "🚉 Station Ahead: %d m" % dist_meters
-			distance_label.modulate = Color.WHITE
+			distance_label.add_theme_color_override("font_color", COLOR_TEXT_DARK)
 
 	# Request minimap redraw
 	if minimap_panel:
