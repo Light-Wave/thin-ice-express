@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cgqrt7f4qnroq"]
 
+[ext_resource type="PackedScene" uid="uid://b8901234bg" path="res://background.tscn" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cfgfx5atenmgv" path="res://passenger_ui.tscn" id="4_passenger"]
 [ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
@@ -8,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://c8901234complete" path="res://level_complete_ui.tscn" id="8_complete"]
 
 [node name="main" type="Node2D" unique_id=508355250]
+
+[node name="GameBackground" parent="." instance=ExtResource("1_bg")]
 
 [node name="LevelManager" parent="." instance=ExtResource("6_lvl")]
 
