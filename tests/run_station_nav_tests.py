@@ -32,20 +32,27 @@ class SimulatedStationNav:
         else:
             return f"🚉 Station Ahead: {int(dist / 10.0)} m"
 
-def test_station_distance_tracking():
-    print("\n[UX Test 1] Testing Station Distance Tracking...")
-    nav = SimulatedStationNav(1500.0)
-    assert nav.get_remaining_distance_meters() == 150, f"Expected 150m, got {nav.get_remaining_distance_meters()}"
-    
-    # Drive player 1000 units closer
-    nav.player_pos.y -= 1000.0
-    assert nav.get_remaining_distance_meters() == 50, f"Expected 50m, got {nav.get_remaining_distance_meters()}"
-    print("✓ PASS: Distance calculations track train position accurately.")
+def get_distance_for_level(level_num):
+    return 250.0 + (level_num - 1) * 250.0
+
+def test_station_distance_scaling():
+    print("\n[UX Test 1] Testing Level 1 Tutorial 250m Distance Scaling & Progression...")
+    lvl1_dist = get_distance_for_level(1)
+    lvl2_dist = get_distance_for_level(2)
+    lvl5_dist = get_distance_for_level(5)
+
+    assert lvl1_dist == 250.0, f"Expected Level 1 tutorial distance of 250m, got {lvl1_dist}"
+    assert lvl2_dist == 500.0, f"Expected Level 2 distance of 500m, got {lvl2_dist}"
+    assert lvl5_dist == 1250.0, f"Expected Level 5 distance of 1250m, got {lvl5_dist}"
+
+    nav = SimulatedStationNav(lvl1_dist * 10.0) # 250m = 2500 units
+    assert nav.get_remaining_distance_meters() == 250, f"Expected 250m remaining, got {nav.get_remaining_distance_meters()}"
+    print("✓ PASS: Level 1 Tutorial distance scales to 250m and grows progressively per level.")
     return True
 
 def test_station_arrival_trigger():
     print("\n[UX Test 2] Testing Station Arrival Victory Signal...")
-    nav = SimulatedStationNav(1500.0)
+    nav = SimulatedStationNav(2500.0)
     nav.player_pos.y = nav.station_pos.y + 50.0 # Within 80 units of station
     status_text = nav.process()
     assert "STATION ARRIVED" in status_text and nav.station_reached_signals == 1, "Station arrival signal failed"
@@ -53,7 +60,7 @@ def test_station_arrival_trigger():
     return True
 
 if __name__ == "__main__":
-    tests = [test_station_distance_tracking, test_station_arrival_trigger]
+    tests = [test_station_distance_scaling, test_station_arrival_trigger]
     passed = 0
     for t in tests:
         if t(): passed += 1

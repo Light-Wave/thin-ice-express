@@ -18,12 +18,20 @@ func _ready() -> void:
 	player_train = get_node_or_null("../Locomotive") as Node2D
 	if player_train:
 		path_history.append(player_train.global_position)
+		
+	var nav_node = get_node_or_null("../StationNavigation")
+	if nav_node and "station_position" in nav_node:
+		station_world_pos = nav_node.station_position
 
 
 func _process(delta: float) -> void:
 	if not player_train:
 		player_train = get_node_or_null("../Locomotive") as Node2D
 		return
+
+	var nav_node = get_node_or_null("../StationNavigation")
+	if nav_node and "station_position" in nav_node:
+		station_world_pos = nav_node.station_position
 
 	# Sample train path history every 0.1s for geographical tracking
 	sample_timer += delta
