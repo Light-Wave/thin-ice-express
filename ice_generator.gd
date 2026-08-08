@@ -19,7 +19,7 @@ var last_player_row: int = -9999
 
 func _ready() -> void:
 	# Find locomotive in scene tree
-	player_train = get_node_or_null("../Locomotive") as Node2D
+	player_train = get_node_or_null("../Train/Locomotive") as Node2D
 	_generate_initial_grid()
 
 
