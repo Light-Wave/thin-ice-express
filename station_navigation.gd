@@ -53,7 +53,7 @@ func _process(_delta: float) -> void:
 	if distance_label:
 		if dist <= 80.0 and not level_completed:
 			level_completed = true
-			distance_label.text = "🎉 LEVEL COMPLETE! ADVANCING..."
+			distance_label.text = "🎉 LEVEL COMPLETE!"
 			distance_label.add_theme_color_override("font_color", COLOR_TEXT_GOLD)
 			
 			var cur_lvl := 1
@@ -62,12 +62,13 @@ func _process(_delta: float) -> void:
 				
 			station_reached.emit(cur_lvl)
 			
-			# Auto advance to next level after 2 seconds
-			var timer := get_tree().create_timer(2.0)
-			timer.timeout.connect(func():
-				if level_manager and level_manager.has_method("advance_to_next_level"):
-					level_manager.advance_to_next_level()
-			)
+			# Trigger Level Complete Celebration UI overlay
+			var complete_ui := get_node_or_null("../LevelCompleteUI")
+			if complete_ui and complete_ui.has_method("show_celebration"):
+				complete_ui.show_celebration(cur_lvl)
+			elif level_manager and level_manager.has_method("advance_to_next_level"):
+				level_manager.advance_to_next_level()
+
 		elif not level_completed:
 			distance_label.text = "🚉 Station Ahead: %d m" % dist_meters
 			distance_label.add_theme_color_override("font_color", COLOR_TEXT_DARK)

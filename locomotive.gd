@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name Locomotive
 
+const FloatingPopupScript = preload("res://floating_popup.gd")
+
 enum TrainType {
 	VINTAGE_STEAM,  # Level 1 Tutorial: Heavy Vintage Steam Engine
 	X2000_SERIES,   # Levels 2 & 3: Iconic Swedish X2000 Tilting High-Speed Train
@@ -17,7 +19,6 @@ enum TrainType {
 @export var bump_penalty_multiplier: float = 1.0 ## Level-based penalty scaling (0.3x for Tutorial, 0.6x for Level 2)
 
 var prev_velocity := Vector2.ZERO
-
 var passenger_ui: PassengerUI
 var anim_time: float = 0.0
 var bump_cooldown: float = 0.0
@@ -115,8 +116,7 @@ func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
 	if final_amount >= 1.0 and bump_cooldown <= 0.0:
 		bump_cooldown = 0.4
 		var popup_msg := "%s -%d" % [reason, max(1, int(final_amount))]
-		FloatingPopup.spawn(get_parent(), global_position, popup_msg)
-
+		FloatingPopupScript.spawn(get_parent(), global_position, popup_msg)
 
 
 func _draw() -> void:
