@@ -2,8 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://b8k12345icetile" path="res://ice_tile.tscn" id="3_icetile"]
+[ext_resource type="PackedScene" uid="uid://c8901234passenger" path="res://passenger_ui.tscn" id="4_passenger"]
 
 [node name="main" type="Node2D" unique_id=508355250]
+
+[node name="PassengerUI" parent="." instance=ExtResource("4_passenger")]
 
 [node name="IceTile1" parent="." instance=ExtResource("3_icetile")]
 position = Vector2(250, 127)
