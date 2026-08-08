@@ -1,10 +1,11 @@
 extends CharacterBody2D
 
-@export var acceleration := 200.0
-@export var max_speed := 500.0
+@export var acceleration := 120.0
+@export var max_speed := 250.0
 @export var braking := 300.0
 @export var turn_speed := 2.0
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
+
 
 var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI

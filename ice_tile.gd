@@ -8,8 +8,9 @@ signal ice_cracked(crack_level: int)
 signal ice_broken
 
 @export var max_cracks: int = 3
-@export var time_between_cracks: float = 0.5 ## Seconds train must remain on tile before cracking further
+@export var time_between_cracks: float = 2.5 ## Seconds train must remain on tile before cracking further (for slow driver comfort)
 @export var tile_size: Vector2 = Vector2(96, 96)
+
 
 var crack_level: int = 0
 var is_broken: bool = false
