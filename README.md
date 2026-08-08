@@ -62,6 +62,8 @@ Survive the hazardous ice run and reach safety without plunging into the freezin
 
 ---
 
-## 👥 Authors & Collaborators
+## 👥 Project Credits & Roles
 
-* **Manoj Axelsson** & Collaborator
+* **Jonas Hallin** — Chief Contributor, Lead Programmer & Project Owner
+* **Manoj Axelsson** — Collaborator (contributing at Jonas Hallin's request)
+
