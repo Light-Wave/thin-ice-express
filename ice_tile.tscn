@@ -1,17 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://b8k12345icetile"]
+[gd_scene load_steps=4 format=3 uid="uid://0kvwqc614dyo"]
 
-[ext_resource type="Script" path="res://ice_tile.gd" id="1_icetile"]
+[ext_resource type="Script" uid="uid://bclujus1vpa18" path="res://ice_tile.gd" id="1_icetile"]
 [ext_resource type="Texture2D" uid="uid://m31cfapo1gay" path="res://icon.svg" id="2_icon"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_icetile"]
-size = Vector2(64, 64)
+size = Vector2(96, 96)
 
-[node name="IceTile" type="Area2D"]
+[node name="IceTile" type="Area2D" unique_id=646806545]
 script = ExtResource("1_icetile")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.5, 0.5)
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=20511380]
+scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_icon")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1654709719]
 shape = SubResource("RectangleShape2D_icetile")

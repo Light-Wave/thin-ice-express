@@ -1,7 +1,10 @@
-[gd_scene format=3 uid="uid://dh3jjixd5xt0b"]
+[gd_scene load_steps=4 format=3 uid="uid://dh3jjixd5xt0b"]
 
 [ext_resource type="Script" uid="uid://ltf6v0ij7g0n" path="res://locomotive.gd" id="1_us4ex"]
 [ext_resource type="Texture2D" uid="uid://m31cfapo1gay" path="res://icon.svg" id="2_yk08p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_loco"]
+size = Vector2(128, 50)
 
 [node name="Locomotive" type="CharacterBody2D" unique_id=2044510754]
 script = ExtResource("1_us4ex")
@@ -12,3 +15,4 @@ scale = Vector2(1, 0.39062503)
 texture = ExtResource("2_yk08p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2102978099]
+shape = SubResource("RectangleShape2D_loco")
