@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://cfgfx5atenmgv"]
 
-[ext_resource type="Script" path="res://passenger_ui.gd" id="1_passenger"]
+[ext_resource type="Script" uid="uid://84ya4myw0dc" path="res://passenger_ui.gd" id="1_passenger"]
 
-[node name="PassengerUI" type="CanvasLayer"]
+[node name="PassengerUI" type="CanvasLayer" unique_id=1634301454]
 script = ExtResource("1_passenger")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=2003923609]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 20.0
@@ -13,7 +13,7 @@ offset_top = 20.0
 offset_right = 320.0
 offset_bottom = 120.0
 
-[node name="MarginContainer" type="MarginContainer" parent="Control"]
+[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=840649698]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,19 +21,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer" unique_id=664281837]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="TitleLabel" type="Label" parent="Control/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="Control/MarginContainer/VBoxContainer" unique_id=101654032]
 layout_mode = 2
 text = "🚂 PASSENGER SLEEP COMFORT"
 
-[node name="ProgressBar" type="ProgressBar" parent="Control/MarginContainer/VBoxContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="Control/MarginContainer/VBoxContainer" unique_id=341835486]
+light_mask = 3
 custom_minimum_size = Vector2(280, 24)
 layout_mode = 2
 value = 100.0
 
-[node name="StatusLabel" type="Label" parent="Control/MarginContainer/VBoxContainer"]
+[node name="StatusLabel" type="Label" parent="Control/MarginContainer/VBoxContainer" unique_id=788168332]
 layout_mode = 2
 text = "😴 Sleeping Soundly (zZz...)"
