@@ -16,11 +16,19 @@ var is_game_over: bool = false
 @onready var comfort_bar: ProgressBar = $Control/MarginContainer/VBoxContainer/ProgressBar
 @onready var status_label: Label = $Control/MarginContainer/VBoxContainer/StatusLabel
 @onready var title_label: Label = $Control/MarginContainer/VBoxContainer/TitleLabel
+@onready var level_label: Label = $Control/MarginContainer/VBoxContainer/LevelLabel
 
 
 func _ready() -> void:
 	current_comfort = max_comfort
 	_update_ui()
+	
+	# Connect to LevelManager decoupled
+	var level_manager = get_node_or_null("../LevelManager")
+	if level_manager and level_manager.has_signal("level_changed"):
+		level_manager.level_changed.connect(_on_level_changed)
+		if "current_level" in level_manager:
+			set_level_name("Level %d" % level_manager.current_level)
 
 
 func _process(delta: float) -> void:
@@ -32,6 +40,16 @@ func _process(delta: float) -> void:
 		current_comfort = minf(max_comfort, current_comfort + comfort_recovery_rate * delta)
 		comfort_changed.emit(current_comfort)
 		_update_ui()
+
+
+## Set Level Title in HUD
+func set_level_name(level_text: String) -> void:
+	if level_label:
+		level_label.text = level_text
+
+
+func _on_level_changed(_num: int, level_name: String) -> void:
+	set_level_name(level_name)
 
 
 ## Call this function whenever a bump, sharp turn, or collision occurs
