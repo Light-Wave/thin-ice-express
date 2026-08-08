@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://b8901234bg"]
+[gd_scene format=3 uid="uid://caa01234bg"]
 
 [ext_resource type="Script" path="res://background.gd" id="1_bg"]
 [ext_resource type="Script" path="res://background_graphics.gd" id="2_bggfx"]
