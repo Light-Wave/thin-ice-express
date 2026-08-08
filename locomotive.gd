@@ -18,6 +18,7 @@ enum TrainType {
 var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI
 var anim_time: float = 0.0
+var bump_cooldown: float = 0.0
 
 
 func _ready() -> void:
@@ -52,6 +53,8 @@ func set_train_type(type: TrainType) -> void:
 
 func _physics_process(delta: float) -> void:
 	anim_time += delta
+	if bump_cooldown > 0.0:
+		bump_cooldown -= delta
 
 	var throttle := Input.get_axis(
 		"ui_down",
@@ -77,13 +80,13 @@ func _physics_process(delta: float) -> void:
 
 	# Calculate speed & sharp turning jolt for passenger comfort
 	var speed := velocity.length()
-	if absf(steering) > 0.1 and speed > 80.0:
+	if absf(steering) > 0.1 and speed > 80.0 and bump_cooldown <= 0.0:
 		var jolt := (speed / max_speed) * absf(steering) * jolt_sensitivity * 100.0 * delta
-		apply_passenger_bump(jolt)
+		apply_passenger_bump(jolt, "SHARP TURN!")
 
 	# Test bump key (Spacebar) for quick testing
 	if Input.is_action_just_pressed("ui_accept"):
-		apply_passenger_bump(15.0)
+		apply_passenger_bump(15.0, "TEST BUMP!")
 
 	# Reset game key (R key)
 	if Input.is_physical_key_pressed(KEY_R):
@@ -94,10 +97,21 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 
-## Apply passenger bump/jolt to PassengerUI
-func apply_passenger_bump(amount: float) -> void:
+## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
+func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
 	if passenger_ui:
 		passenger_ui.apply_jolt(amount)
+
+	# Visual train bounce tween
+	var tween := create_tween()
+	tween.tween_property(self, "scale", Vector2(1.15, 1.15), 0.06)
+	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.06)
+
+	# Spawn floating text popup above train
+	if amount >= 5.0 and bump_cooldown <= 0.0:
+		bump_cooldown = 0.4
+		var popup_msg := "%s -%d" % [reason, int(amount)]
+		FloatingPopup.spawn(get_parent(), global_position, popup_msg)
 
 
 func _draw() -> void:
