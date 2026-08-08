@@ -64,6 +64,8 @@ Survive the hazardous ice run and reach safety without plunging into the freezin
 
 ## 👥 Project Credits & Roles
 
-* **Lightwave** — Chief Contributor, Lead Programmer & Project Owner
+
 * **Manoj Axelsson** — Collaborator (contributing at Lightwave's request)
+
+contributed to Light-wave-studio's project 
 
