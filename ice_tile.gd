@@ -24,6 +24,11 @@ var wobble_offset := Vector2.ZERO
 var melt_scale: float = 1.0
 var melt_alpha: float = 1.0
 
+# Dynamic Proximity Ahead Detection
+var is_approaching: bool = false
+var approach_intensity: float = 0.0
+var player_train_ref: Node2D
+
 # Color Palette for Ice -> Cracks -> Water
 const COLOR_ICE_BASE := Color(0.7, 0.9, 1.0, 1.0)       # Shiny Ice Blue
 const COLOR_ICE_BORDER := Color(0.9, 0.98, 1.0, 1.0)    # Crisp White Border
@@ -31,6 +36,7 @@ const COLOR_CRACK_LIGHT := Color(0.3, 0.6, 0.8, 1.0)    # Light Crack Lines
 const COLOR_CRACK_HEAVY := Color(0.9, 0.3, 0.3, 1.0)    # Danger Red Cracks
 const COLOR_WATER_BASE := Color(0.1, 0.35, 0.65, 0.85)  # Deep Water Blue
 const COLOR_RIPPLE := Color(0.3, 0.65, 0.9, 0.6)        # Water Ripple
+const COLOR_ICE_GLOW := Color(0.4, 0.85, 1.0, 0.6)      # Proximity Warning Glow
 
 
 func _ready() -> void:
@@ -47,6 +53,24 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	anim_time += delta
+
+	# Track train proximity to dynamically change icy path in front of train as it nears
+	if not player_train_ref or not is_instance_valid(player_train_ref):
+		player_train_ref = get_node_or_null("../Train/Locomotive") as Node2D
+		if not player_train_ref:
+			player_train_ref = get_node_or_null("../Locomotive") as Node2D
+
+	if player_train_ref and not is_broken:
+		var dist := global_position.distance_to(player_train_ref.global_position)
+		if dist < 180.0:
+			is_approaching = true
+			approach_intensity = clampf(1.0 - (dist / 180.0), 0.0, 1.0)
+		else:
+			is_approaching = false
+			approach_intensity = 0.0
+	else:
+		is_approaching = false
+		approach_intensity = 0.0
 
 	# Wobble animation if heavily cracked (stage 2)
 	if crack_level == 2 and not is_broken:
@@ -91,8 +115,23 @@ func _draw() -> void:
 	elif crack_level == 2:
 		base_color = COLOR_ICE_BASE.lerp(Color(0.8, 0.4, 0.4), 0.4) # Flashes reddish warning
 
+	# Dynamic visual shift as train nears the icy path ahead
+	if is_approaching and crack_level == 0:
+		base_color = base_color.lerp(Color(0.85, 0.95, 1.0), approach_intensity * 0.5)
+
 	draw_rect(rect, base_color, true)
 	draw_rect(rect, COLOR_ICE_BORDER, false, 3.0)
+
+	# Dynamic proximity warning glow & hairline stress preview as train approaches
+	if is_approaching and not is_broken:
+		var glow_color := COLOR_ICE_GLOW
+		glow_color.a = approach_intensity * 0.5
+		draw_rect(rect, glow_color, false, 4.0 + sin(anim_time * 10.0) * 1.5)
+		
+		# Hairline stress lines forming under approaching engine weight
+		var half_size := tile_size / 2.0
+		var line_color := Color(0.5, 0.8, 1.0, approach_intensity * 0.7)
+		draw_line(Vector2(-half_size.x + 20, 0), Vector2(half_size.x - 20, 0), line_color, 1.5)
 
 	# Draw Crack Lines based on crack level
 	var half := tile_size / 2.0

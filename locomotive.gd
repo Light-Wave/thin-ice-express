@@ -17,7 +17,8 @@ enum TrainType {
 @export var turn_torque := 15000.0
 @export var max_speed := 250.0
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
-@export var bump_penalty_multiplier: float = 1.0 ## Level-based penalty scaling (0.3x for Tutorial, 0.6x for Level 2)
+@export var lateral_ice_drag_coefficient: float = 6.0 ## Gentle lateral dampening resisting sideways slide on ice
+@export var opposite_drag_drift_force: float = 180.0 ## Opposite side drag force when turning on ice
 
 
 var prev_velocity := Vector2.ZERO
@@ -85,9 +86,23 @@ func _physics_process(delta: float) -> void:
 	if absf(steering) > 0.0:
 		apply_torque(steering * turn_torque)
 
-	# Passenger bump from sharp turns
+	# Lateral Ice Drag & Opposite Side Drift Drag Physics
 	var speed := linear_velocity.length()
+	if speed > 5.0:
+		# Decompose velocity into right vector (lateral slide)
+		var right_vec := transform.y
+		var lateral_vel_mag := linear_velocity.dot(right_vec)
+		
+		# Gentle lateral drag force opposing sideways drift
+		var lateral_drag := -right_vec * lateral_vel_mag * lateral_ice_drag_coefficient * mass
+		apply_central_force(lateral_drag)
+		
+		# Subtle drag force pushing to opposite side when turning on ice
+		if absf(steering) > 0.05:
+			var opposite_drag := -right_vec * (steering * opposite_drag_drift_force * mass)
+			apply_central_force(opposite_drag)
 
+	# Passenger bump from sharp turns
 	if absf(steering) > 0.1 and speed > 100.0:
 		var jolt := (
 			speed / max_speed

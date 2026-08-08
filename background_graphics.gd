@@ -46,9 +46,22 @@ func _load_background_textures() -> void:
 				level_textures[lvl] = ImageTexture.create_from_image(img)
 
 
+var player_train: Node2D
+var train_pos := Vector2.ZERO
+
+
 func _process(delta: float) -> void:
 	anim_time += delta
 	
+	# Find player train to track position across the icy field
+	if not player_train:
+		player_train = get_node_or_null("../../Train/Locomotive") as Node2D
+		if not player_train:
+			player_train = get_node_or_null("../../Locomotive") as Node2D
+			
+	if player_train:
+		train_pos = player_train.global_position
+
 	# Auto-detect level changes if LevelManager is present
 	var level_mgr = get_node_or_null("../../LevelManager")
 	if level_mgr and level_mgr.current_level != current_level:
@@ -62,16 +75,28 @@ func _draw() -> void:
 	if screen_size.x <= 0 or screen_size.y <= 0:
 		screen_size = Vector2(1152, 648)
 
-	var screen_rect := Rect2(Vector2.ZERO, screen_size)
+	# Calculate parallax scroll offset based on train position across large icy field
+	var parallax_factor := 0.15
+	var scroll_offset := Vector2(
+		fmod(-train_pos.x * parallax_factor, screen_size.x),
+		fmod(-train_pos.y * parallax_factor, screen_size.y)
+	)
 
-	# 1. Render High Quality Image Artwork if available for current level
+	# 1. Render Scrolling High Quality Background Artwork
 	if level_textures.has(current_level) and level_textures[current_level] != null:
-		draw_texture_rect(level_textures[current_level], screen_rect, false)
+		var overdraw_margin := 80.0
+		var bg_rect := Rect2(
+			Vector2(-overdraw_margin, -overdraw_margin) + scroll_offset * 0.3,
+			screen_size + Vector2(overdraw_margin * 2.0, overdraw_margin * 2.0)
+		)
+		draw_texture_rect(level_textures[current_level], bg_rect, false)
 	else:
-		# Fail-safe procedural sky base
 		_draw_procedural_sky(screen_size)
 
-	# 2. Render Plot-Matching Dynamic Atmospheric Overlays
+	# 2. Render Scrolling Large Icy Field Tract Surface
+	_draw_icy_field_tract(screen_size, train_pos)
+
+	# 3. Render Plot-Matching Dynamic Atmospheric Overlays
 	match current_level:
 		1:
 			_draw_level1_calm_fjord_overlay(screen_size)
@@ -83,6 +108,27 @@ func _draw() -> void:
 			_draw_level4_fragile_bridge_overlay(screen_size)
 		5:
 			_draw_level5_dawn_dash_overlay(screen_size)
+
+
+## Render Large Open Icy Field Grid & Snow Drift Lines following train motion
+func _draw_icy_field_tract(screen_size: Vector2, train_p: Vector2) -> void:
+	var field_color := Color(0.8, 0.92, 1.0, 0.08) # Subtle translucent ice grid
+	var grid_step := 128.0
+	
+	var offset_x: float = fmod(-train_p.x, grid_step)
+	var offset_y: float = fmod(-train_p.y, grid_step)
+	
+	# Horizontal icy field lines
+	var y: float = offset_y
+	while y < screen_size.y:
+		draw_line(Vector2(0, y), Vector2(screen_size.x, y), field_color, 1.5)
+		y += grid_step
+
+	# Vertical icy field lines
+	var x: float = offset_x
+	while x < screen_size.x:
+		draw_line(Vector2(x, 0), Vector2(x, screen_size.y), field_color, 1.5)
+		x += grid_step
 
 
 ## Level 1: The Calm Fjord (Soft Morning Sun Rays & Lake Shimmer)
