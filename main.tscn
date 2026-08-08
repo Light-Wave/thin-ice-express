@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://b8901234bg" path="res://background.tscn" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://7pqr8mfmynly" path="res://wagon.tscn" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://cfgfx5atenmgv" path="res://passenger_ui.tscn" id="4_passenger"]
 [ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
 [ext_resource type="PackedScene" uid="uid://e8901234lvl" path="res://level_manager.tscn" id="6_lvl"]
@@ -25,5 +26,42 @@
 
 [node name="IceGenerator" parent="." instance=ExtResource("5_icegen")]
 
-[node name="Locomotive" parent="." unique_id=2044510754 instance=ExtResource("2_h2yge")]
+[node name="Train" type="Node" parent="." unique_id=1287673036]
+
+[node name="Locomotive" parent="Train" unique_id=2044510754 instance=ExtResource("2_h2yge")]
 position = Vector2(124, 127)
+
+[node name="PinJoint2D2" type="PinJoint2D" parent="Train/Locomotive" unique_id=595929071]
+position = Vector2(-66, -1)
+node_a = NodePath("..")
+node_b = NodePath("../../Wagon")
+disable_collision = false
+angular_limit_lower = -0.7853982
+angular_limit_upper = 0.7853982
+
+[node name="Wagon" parent="Train" unique_id=629605420 instance=ExtResource("4_1bvp3")]
+position = Vector2(-8, 127)
+
+[node name="PinJoint2D" type="PinJoint2D" parent="Train/Wagon" unique_id=243990129]
+position = Vector2(-65, 0)
+node_a = NodePath("..")
+node_b = NodePath("../../Wagon2")
+disable_collision = false
+softness = 4.15
+angular_limit_lower = -0.5235988
+angular_limit_upper = 0.5235988
+
+[node name="Wagon2" parent="Train" unique_id=1794476337 instance=ExtResource("4_1bvp3")]
+position = Vector2(-140, 127)
+
+[node name="PinJoint2D" type="PinJoint2D" parent="Train/Wagon2" unique_id=609033597]
+position = Vector2(-66, -1)
+node_a = NodePath("..")
+node_b = NodePath("../../Wagon3")
+disable_collision = false
+softness = 4.15
+angular_limit_lower = -0.5235988
+angular_limit_upper = 0.5235988
+
+[node name="Wagon3" parent="Train" unique_id=1354248622 instance=ExtResource("4_1bvp3")]
+position = Vector2(-273, 127)

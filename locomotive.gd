@@ -1,4 +1,5 @@
-extends CharacterBody2D
+
+extends RigidBody2D
 class_name Locomotive
 
 const FloatingPopupScript = preload("res://floating_popup.gd")
@@ -11,12 +12,13 @@ enum TrainType {
 
 @export var current_train_type: TrainType = TrainType.VINTAGE_STEAM
 
-@export var acceleration := 120.0
+@export var engine_force := 1200.0
+@export var brake_force := 1500.0
+@export var turn_torque := 15000.0
 @export var max_speed := 250.0
-@export var braking := 300.0
-@export var turn_speed := 2.0
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
 @export var bump_penalty_multiplier: float = 1.0 ## Level-based penalty scaling (0.3x for Tutorial, 0.6x for Level 2)
+
 
 var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI
@@ -44,13 +46,13 @@ func set_train_type(type: TrainType) -> void:
 	match current_train_type:
 		TrainType.VINTAGE_STEAM:
 			max_speed = 220.0
-			acceleration = 100.0
+			engine_force = 1000.0
 		TrainType.X2000_SERIES:
 			max_speed = 280.0
-			acceleration = 140.0
+			engine_force = 1400.0
 		TrainType.BULLET_TRAIN:
 			max_speed = 350.0
-			acceleration = 180.0
+			engine_force = 1800.0
 	queue_redraw()
 
 
@@ -64,30 +66,40 @@ func _physics_process(delta: float) -> void:
 		"ui_up"
 	)
 
+	# Engine / braking
 	if throttle > 0:
-		velocity += transform.x * acceleration * delta
+		apply_central_force(transform.x * engine_force)
 	elif throttle < 0:
-		velocity = velocity.move_toward(
-			Vector2.ZERO,
-			braking * delta
-		)
+		apply_central_force(-transform.x * brake_force)
 
-	velocity = velocity.limit_length(max_speed)
+	# Limit maximum speed
+	if linear_velocity.length() > max_speed:
+		linear_velocity = linear_velocity.limit_length(max_speed)
 
+	# Steering
 	var steering := Input.get_axis(
 		"ui_left",
 		"ui_right"
 	)
 
-	rotation += steering * turn_speed * delta
+	if absf(steering) > 0.0:
+		apply_torque(steering * turn_torque)
 
-	# Calculate speed & sharp turning jolt for passenger comfort
-	var speed := velocity.length()
-	if absf(steering) > 0.1 and speed > 80.0 and bump_cooldown <= 0.0:
-		var jolt := (speed / max_speed) * absf(steering) * jolt_sensitivity * 100.0 * delta
-		apply_passenger_bump(jolt, "SHARP TURN!")
+	# Passenger bump from sharp turns
+	var speed := linear_velocity.length()
 
-	# Test bump key (Spacebar) for quick testing
+	if absf(steering) > 0.1 and speed > 100.0:
+		var jolt := (
+			speed / max_speed
+			* absf(steering)
+			* jolt_sensitivity
+			* 100.0
+			* delta
+		)
+
+		apply_passenger_bump(jolt)
+
+	# Test bump key (Spacebar)
 	if Input.is_action_just_pressed("ui_accept"):
 		apply_passenger_bump(15.0, "TEST BUMP!")
 
@@ -95,15 +107,12 @@ func _physics_process(delta: float) -> void:
 	if Input.is_physical_key_pressed(KEY_R):
 		get_tree().reload_current_scene()
 
-	prev_velocity = velocity
-	move_and_slide()
-	queue_redraw()
+
+	prev_velocity = linear_velocity
 
 
-## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
-func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
+func apply_passenger_bump(amount: float, reason:String = "") -> void:
 	var final_amount := amount * bump_penalty_multiplier
-
 	if passenger_ui:
 		passenger_ui.apply_jolt(final_amount)
 
@@ -143,7 +152,7 @@ func _draw_vintage_steam() -> void:
 	draw_rect(Rect2(25, -28, 12, 16), Color(0.1, 0.1, 0.1), true)
 	
 	# Animated Steam Puffs
-	if velocity.length() > 10.0:
+	if linear_velocity.length() > 10.0:
 		var puff_size := 6.0 + sin(anim_time * 15.0) * 3.0
 		draw_circle(Vector2(31 + cos(anim_time * 10.0) * 5.0, -35), puff_size, Color(0.95, 0.95, 0.95, 0.7))
 
