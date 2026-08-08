@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8901234complete"]
+[gd_scene format=3 uid="uid://dav11w00banq5"]
 
 [ext_resource type="Script" path="res://level_complete_ui.gd" id="1_complete"]
 
