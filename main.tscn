@@ -3,8 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://cfgfx5atenmgv" path="res://passenger_ui.tscn" id="4_passenger"]
 [ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
+[ext_resource type="PackedScene" uid="uid://e8901234lvl" path="res://level_manager.tscn" id="6_lvl"]
 
 [node name="main" type="Node2D" unique_id=508355250]
+
+[node name="LevelManager" parent="." instance=ExtResource("6_lvl")]
 
 [node name="PassengerUI" parent="." unique_id=107121300 instance=ExtResource("4_passenger")]
 
