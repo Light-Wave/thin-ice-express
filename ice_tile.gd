@@ -16,6 +16,7 @@ var crack_level: int = 0
 var is_broken: bool = false
 var train_on_tile: bool = false
 var crack_timer: float = 0.0
+var active_bodies: Array[Node2D] = []
 
 # Animation timers & variables
 var anim_time: float = 0.0
@@ -142,18 +143,26 @@ func break_ice() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("train") or body is CharacterBody2D:
+		if not active_bodies.has(body):
+			active_bodies.append(body)
+		
+		var is_first_body := active_bodies.size() == 1
 		train_on_tile = true
-		crack_timer = 0.0
+
 		if is_broken:
 			if body.has_method("apply_passenger_bump"):
 				body.apply_passenger_bump(25.0, "SPLASH WATER!")
 		else:
-			advance_crack()
-			if body.has_method("apply_passenger_bump"):
-				body.apply_passenger_bump(8.0, "ICE BUMP!")
+			if is_first_body:
+				crack_timer = 0.0
+				advance_crack()
+				if body.has_method("apply_passenger_bump"):
+					body.apply_passenger_bump(8.0, "ICE BUMP!")
 
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("train") or body is CharacterBody2D:
-		train_on_tile = false
-		crack_timer = 0.0
+		active_bodies.erase(body)
+		if active_bodies.is_empty():
+			train_on_tile = false
+			crack_timer = 0.0
