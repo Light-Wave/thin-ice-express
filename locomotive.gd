@@ -14,8 +14,10 @@ enum TrainType {
 @export var braking := 300.0
 @export var turn_speed := 2.0
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
+@export var bump_penalty_multiplier: float = 1.0 ## Level-based penalty scaling (0.3x for Tutorial, 0.6x for Level 2)
 
 var prev_velocity := Vector2.ZERO
+
 var passenger_ui: PassengerUI
 var anim_time: float = 0.0
 var bump_cooldown: float = 0.0
@@ -99,8 +101,10 @@ func _physics_process(delta: float) -> void:
 
 ## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
 func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
+	var final_amount := amount * bump_penalty_multiplier
+
 	if passenger_ui:
-		passenger_ui.apply_jolt(amount)
+		passenger_ui.apply_jolt(final_amount)
 
 	# Visual train bounce tween
 	var tween := create_tween()
@@ -108,10 +112,11 @@ func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
 	tween.tween_property(self, "scale", Vector2(1.0, 1.0), 0.06)
 
 	# Spawn floating text popup above train
-	if amount >= 5.0 and bump_cooldown <= 0.0:
+	if final_amount >= 1.0 and bump_cooldown <= 0.0:
 		bump_cooldown = 0.4
-		var popup_msg := "%s -%d" % [reason, int(amount)]
+		var popup_msg := "%s -%d" % [reason, max(1, int(final_amount))]
 		FloatingPopup.spawn(get_parent(), global_position, popup_msg)
+
 
 
 func _draw() -> void:
