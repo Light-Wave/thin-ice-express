@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://g8901234geomap"]
+[gd_scene format=3 uid="uid://ci4x3n12xc712"]
 
 [ext_resource type="Script" path="res://geo_map.gd" id="1_geomap"]
 [ext_resource type="Script" path="res://geo_map_render.gd" id="2_render"]
