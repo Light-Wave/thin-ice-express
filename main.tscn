@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://s8901234nav" path="res://station_navigation.tscn" id="7_nav"]
 [ext_resource type="PackedScene" uid="uid://c8901234complete" path="res://level_complete_ui.tscn" id="8_complete"]
 [ext_resource type="PackedScene" uid="uid://g8901234geomap" path="res://geo_map.tscn" id="9_geomap"]
+[ext_resource type="PackedScene" uid="uid://s8901234station" path="res://station.tscn" id="10_station"]
 
 [node name="main" type="Node2D" unique_id=508355250]
 
@@ -25,6 +26,9 @@
 [node name="LevelCompleteUI" parent="." instance=ExtResource("8_complete")]
 
 [node name="IceGenerator" parent="." instance=ExtResource("5_icegen")]
+
+[node name="TrainStation" parent="." instance=ExtResource("10_station")]
+position = Vector2(124, -1373)
 
 [node name="Train" type="Node" parent="." unique_id=1287673036]
 
