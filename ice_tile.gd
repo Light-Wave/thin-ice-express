@@ -30,13 +30,14 @@ var approach_intensity: float = 0.0
 var player_train_ref: Node2D
 
 # Color Palette for Ice -> Cracks -> Water
-const COLOR_ICE_BASE := Color(0.7, 0.9, 1.0, 1.0)       # Shiny Ice Blue
-const COLOR_ICE_BORDER := Color(0.9, 0.98, 1.0, 1.0)    # Crisp White Border
-const COLOR_CRACK_LIGHT := Color(0.3, 0.6, 0.8, 1.0)    # Light Crack Lines
-const COLOR_CRACK_HEAVY := Color(0.9, 0.3, 0.3, 1.0)    # Danger Red Cracks
-const COLOR_WATER_BASE := Color(0.1, 0.35, 0.65, 0.85)  # Deep Water Blue
-const COLOR_RIPPLE := Color(0.3, 0.65, 0.9, 0.6)        # Water Ripple
-const COLOR_ICE_GLOW := Color(0.4, 0.85, 1.0, 0.6)      # Proximity Warning Glow
+const COLOR_ICE_BASE := Color(0.75, 0.9, 1.0, 0.15)      # Translucent Glassy Ice Sheet (85% transparent!)
+const COLOR_ICE_BORDER := Color(0.9, 0.98, 1.0, 0.35)    # Subtle Frost Border (65% transparent)
+const COLOR_CRACK_LIGHT := Color(0.3, 0.6, 0.8, 0.9)    # Crisp Light Crack Lines
+const COLOR_CRACK_HEAVY := Color(0.95, 0.3, 0.3, 0.95)  # Vivid Red Danger Cracks
+const COLOR_WATER_BASE := Color(0.1, 0.35, 0.65, 0.75)  # Deep Water Blue
+const COLOR_RIPPLE := Color(0.3, 0.65, 0.9, 0.8)        # Water Ripple
+const COLOR_ICE_GLOW := Color(0.4, 0.85, 1.0, 0.5)      # Proximity Warning Glow
+const COLOR_GLASS_SHEEN := Color(1.0, 1.0, 1.0, 0.25)   # Crystalline Glass Highlight Sheen
 
 
 func _ready() -> void:
@@ -108,33 +109,36 @@ func _draw() -> void:
 		draw_rect(rect, COLOR_WATER_BASE.darkened(0.2), false, 2.0)
 		return
 
-	# Draw Base Ice Tile Block
+	# Draw Base Ice Tile Block (Translucent Sheet so background scenery is fully visible)
 	var base_color := COLOR_ICE_BASE
 	if crack_level == 1:
-		base_color = COLOR_ICE_BASE.lerp(Color(0.5, 0.8, 0.9), 0.5)
+		base_color = Color(0.5, 0.75, 0.9, 0.3)
 	elif crack_level == 2:
-		base_color = COLOR_ICE_BASE.lerp(Color(0.8, 0.4, 0.4), 0.4) # Flashes reddish warning
+		base_color = Color(0.85, 0.4, 0.4, 0.4) # Flashes reddish warning
 
 	# Dynamic visual shift as train nears the icy path ahead
 	if is_approaching and crack_level == 0:
-		base_color = base_color.lerp(Color(0.85, 0.95, 1.0), approach_intensity * 0.5)
+		base_color = base_color.lerp(Color(0.85, 0.95, 1.0, 0.35), approach_intensity * 0.6)
 
 	draw_rect(rect, base_color, true)
-	draw_rect(rect, COLOR_ICE_BORDER, false, 3.0)
+	draw_rect(rect, COLOR_ICE_BORDER, false, 1.5)
+
+	# Glass Refraction Sheen Highlight
+	var half := tile_size / 2.0
+	draw_line(-half + Vector2(6, 6), -half + Vector2(30, 6), COLOR_GLASS_SHEEN, 2.0)
+	draw_line(-half + Vector2(6, 6), -half + Vector2(6, 30), COLOR_GLASS_SHEEN, 2.0)
 
 	# Dynamic proximity warning glow & hairline stress preview as train approaches
 	if is_approaching and not is_broken:
 		var glow_color := COLOR_ICE_GLOW
-		glow_color.a = approach_intensity * 0.5
-		draw_rect(rect, glow_color, false, 4.0 + sin(anim_time * 10.0) * 1.5)
+		glow_color.a = approach_intensity * 0.6
+		draw_rect(rect, glow_color, false, 3.0 + sin(anim_time * 10.0) * 1.5)
 		
 		# Hairline stress lines forming under approaching engine weight
-		var half_size := tile_size / 2.0
-		var line_color := Color(0.5, 0.8, 1.0, approach_intensity * 0.7)
-		draw_line(Vector2(-half_size.x + 20, 0), Vector2(half_size.x - 20, 0), line_color, 1.5)
+		var line_color := Color(0.5, 0.8, 1.0, approach_intensity * 0.8)
+		draw_line(Vector2(-half.x + 20, 0), Vector2(half.x - 20, 0), line_color, 1.5)
 
 	# Draw Crack Lines based on crack level
-	var half := tile_size / 2.0
 	if crack_level >= 1:
 		# Light Crack Lines
 		draw_line(-half + Vector2(10, 10), half - Vector2(20, 10), COLOR_CRACK_LIGHT, 3.0)
