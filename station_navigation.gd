@@ -23,6 +23,8 @@ const COLOR_TEXT_GOLD := Color(0.7, 0.5, 0.0, 1.0)    # Dark Gold
 
 func _ready() -> void:
 	player_train = get_node_or_null("../Locomotive") as Node2D
+	if not player_train:
+		player_train = get_node_or_null("../Train/Locomotive") as Node2D
 	level_manager = get_node_or_null("../LevelManager")
 	
 	if distance_label:
@@ -40,7 +42,10 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if not player_train:
 		player_train = get_node_or_null("../Locomotive") as Node2D
-		return
+		if not player_train:
+			player_train = get_node_or_null("../Train/Locomotive") as Node2D
+		if not player_train:
+			return
 
 	var dist := player_train.global_position.distance_to(station_position)
 	var dist_meters := int(dist / 10.0)
@@ -79,10 +84,14 @@ func _process(_delta: float) -> void:
 
 
 func _setup_station(player_start_pos: Vector2) -> void:
-	# Place station 1500 units ahead along the Y axis
+	# Place visual TrainStation building 1500 units ahead along the Y axis
 	station_position = player_start_pos + Vector2(0, -station_distance_meters)
 	start_distance = station_distance_meters
 	level_completed = false
+	
+	var station_node := get_node_or_null("../TrainStation") as Node2D
+	if station_node:
+		station_node.global_position = station_position
 
 
 func _on_level_changed(_num: int, _name: String) -> void:

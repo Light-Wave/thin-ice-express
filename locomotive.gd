@@ -1,4 +1,3 @@
-
 extends RigidBody2D
 class_name Locomotive
 
@@ -19,7 +18,6 @@ enum TrainType {
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
 @export var bump_penalty_multiplier: float = 1.0 ## Level-based penalty scaling (0.3x for Tutorial, 0.6x for Level 2)
 
-
 var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI
 var anim_time: float = 0.0
@@ -37,6 +35,8 @@ func _ready() -> void:
 
 	# Find PassengerUI in current scene tree if available
 	passenger_ui = get_node_or_null("../PassengerUI") as PassengerUI
+	if not passenger_ui:
+		passenger_ui = get_node_or_null("../../PassengerUI") as PassengerUI
 	
 	set_train_type(current_train_type)
 
@@ -88,7 +88,7 @@ func _physics_process(delta: float) -> void:
 	# Passenger bump from sharp turns
 	var speed := linear_velocity.length()
 
-	if absf(steering) > 0.1 and speed > 100.0:
+	if absf(steering) > 0.1 and speed > 80.0 and bump_cooldown <= 0.0:
 		var jolt := (
 			speed / max_speed
 			* absf(steering)
@@ -97,7 +97,7 @@ func _physics_process(delta: float) -> void:
 			* delta
 		)
 
-		apply_passenger_bump(jolt)
+		apply_passenger_bump(jolt, "SHARP TURN!")
 
 	# Test bump key (Spacebar)
 	if Input.is_action_just_pressed("ui_accept"):
@@ -107,19 +107,25 @@ func _physics_process(delta: float) -> void:
 	if Input.is_physical_key_pressed(KEY_R):
 		get_tree().reload_current_scene()
 
-
 	prev_velocity = linear_velocity
 
 
-func apply_passenger_bump(amount: float, reason:String = "") -> void:
+## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
+func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
 	var final_amount := amount * bump_penalty_multiplier
+	if not passenger_ui:
+		passenger_ui = get_node_or_null("../PassengerUI") as PassengerUI
+		if not passenger_ui:
+			passenger_ui = get_node_or_null("../../PassengerUI") as PassengerUI
+
 	if passenger_ui:
 		passenger_ui.apply_jolt(final_amount)
 
 	# Visual train bounce tween
-	var tween := create_tween()
-	tween.tween_property($Visuals, "scale", Vector2(1.15, 1.15), 0.06)
-	tween.tween_property($Visuals, "scale", Vector2(1.0, 1.0), 0.06)
+	if has_node("Visuals"):
+		var tween := create_tween()
+		tween.tween_property($Visuals, "scale", Vector2(1.15, 1.15), 0.06)
+		tween.tween_property($Visuals, "scale", Vector2(1.0, 1.0), 0.06)
 
 	# Spawn floating text popup above train
 	if final_amount >= 1.0 and bump_cooldown <= 0.0:
