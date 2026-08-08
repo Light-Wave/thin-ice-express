@@ -144,7 +144,13 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("train") or body is CharacterBody2D:
 		train_on_tile = true
 		crack_timer = 0.0
-		advance_crack()
+		if is_broken:
+			if body.has_method("apply_passenger_bump"):
+				body.apply_passenger_bump(25.0, "SPLASH WATER!")
+		else:
+			advance_crack()
+			if body.has_method("apply_passenger_bump"):
+				body.apply_passenger_bump(8.0, "ICE BUMP!")
 
 
 func _on_body_exited(body: Node2D) -> void:
