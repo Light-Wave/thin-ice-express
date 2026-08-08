@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
 [ext_resource type="PackedScene" uid="uid://e8901234lvl" path="res://level_manager.tscn" id="6_lvl"]
 [ext_resource type="PackedScene" uid="uid://s8901234nav" path="res://station_navigation.tscn" id="7_nav"]
+[ext_resource type="PackedScene" uid="uid://c8901234complete" path="res://level_complete_ui.tscn" id="8_complete"]
 
 [node name="main" type="Node2D" unique_id=508355250]
 
@@ -13,6 +14,8 @@
 [node name="PassengerUI" parent="." unique_id=107121300 instance=ExtResource("4_passenger")]
 
 [node name="StationNavigation" parent="." instance=ExtResource("7_nav")]
+
+[node name="LevelCompleteUI" parent="." instance=ExtResource("8_complete")]
 
 [node name="IceGenerator" parent="." instance=ExtResource("5_icegen")]
 
