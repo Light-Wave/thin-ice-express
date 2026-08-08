@@ -36,7 +36,7 @@ func _ready() -> void:
 		sprite.visible = false
 
 	# Find PassengerUI in current scene tree if available
-	passenger_ui = get_node_or_null("../PassengerUI") as PassengerUI
+	passenger_ui = get_node_or_null("../../PassengerUI") as PassengerUI
 	
 	set_train_type(current_train_type)
 
