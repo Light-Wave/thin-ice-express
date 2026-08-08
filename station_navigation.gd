@@ -79,10 +79,14 @@ func _process(_delta: float) -> void:
 
 
 func _setup_station(player_start_pos: Vector2) -> void:
-	# Place station 1500 units ahead along the Y axis
+	# Place visual TrainStation building 1500 units ahead along the Y axis
 	station_position = player_start_pos + Vector2(0, -station_distance_meters)
 	start_distance = station_distance_meters
 	level_completed = false
+	
+	var station_node := get_node_or_null("../TrainStation") as Node2D
+	if station_node:
+		station_node.global_position = station_position
 
 
 func _on_level_changed(_num: int, _name: String) -> void:
