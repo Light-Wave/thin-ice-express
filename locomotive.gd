@@ -51,8 +51,13 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		apply_passenger_bump(15.0)
 
+	# Reset game key (R key)
+	if Input.is_physical_key_pressed(KEY_R):
+		get_tree().reload_current_scene()
+
 	prev_velocity = velocity
 	move_and_slide()
+
 
 
 ## Apply passenger bump/jolt to PassengerUI
