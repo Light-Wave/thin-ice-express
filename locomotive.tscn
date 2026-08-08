@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://m31cfapo1gay" path="res://icon.svg" id="2_yk08p"]
 [ext_resource type="PackedScene" uid="uid://a8901234arrow" path="res://steering_arrow.tscn" id="3_arrow"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_loco"]
-size = Vector2(128, 50)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yk08p"]
+size = Vector2(113, 50)
 
-[node name="Locomotive" type="CharacterBody2D" unique_id=2044510754]
+[node name="Locomotive" type="RigidBody2D" unique_id=629605420]
+gravity_scale = 0.0
 script = ExtResource("1_us4ex")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=633398168]
@@ -15,8 +16,9 @@ position = Vector2(0, -0.9999981)
 scale = Vector2(1, 0.39062503)
 texture = ExtResource("2_yk08p")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2102978099]
-shape = SubResource("RectangleShape2D_loco")
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." unique_id=1658776151]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_yk08p")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128938741]
 position_smoothing_enabled = true
