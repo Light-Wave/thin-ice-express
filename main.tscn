@@ -1,21 +1,14 @@
 [gd_scene format=3 uid="uid://cgqrt7f4qnroq"]
 
 [ext_resource type="PackedScene" uid="uid://dh3jjixd5xt0b" path="res://locomotive.tscn" id="2_h2yge"]
-[ext_resource type="PackedScene" uid="uid://0kvwqc614dyo" path="res://ice_tile.tscn" id="3_icetile"]
 [ext_resource type="PackedScene" uid="uid://cfgfx5atenmgv" path="res://passenger_ui.tscn" id="4_passenger"]
+[ext_resource type="PackedScene" uid="uid://d8901234icegen" path="res://ice_generator.tscn" id="5_icegen"]
 
 [node name="main" type="Node2D" unique_id=508355250]
 
 [node name="PassengerUI" parent="." unique_id=107121300 instance=ExtResource("4_passenger")]
 
-[node name="IceTile1" parent="." unique_id=1130558877 instance=ExtResource("3_icetile")]
-position = Vector2(250, 127)
-
-[node name="IceTile2" parent="." unique_id=628801228 instance=ExtResource("3_icetile")]
-position = Vector2(350, 127)
-
-[node name="IceTile3" parent="." unique_id=424984272 instance=ExtResource("3_icetile")]
-position = Vector2(603, 217)
+[node name="IceGenerator" parent="." instance=ExtResource("5_icegen")]
 
 [node name="Locomotive" parent="." unique_id=2044510754 instance=ExtResource("2_h2yge")]
 position = Vector2(124, 127)
