@@ -109,24 +109,24 @@ func _draw() -> void:
 		draw_rect(rect, COLOR_WATER_BASE.darkened(0.2), false, 2.0)
 		return
 
-	# Draw Base Ice Tile Block (Translucent Sheet so background scenery is fully visible)
+	# Draw Base Ice Tile (Seamless frozen lake bed rendering)
 	var base_color := COLOR_ICE_BASE
 	if crack_level == 1:
-		base_color = Color(0.5, 0.75, 0.9, 0.3)
+		base_color = Color(0.4, 0.7, 0.9, 0.25)
 	elif crack_level == 2:
-		base_color = Color(0.85, 0.4, 0.4, 0.4) # Flashes reddish warning
+		base_color = Color(0.85, 0.35, 0.35, 0.35) # Flashes reddish warning
 
 	# Dynamic visual shift as train nears the icy path ahead
 	if is_approaching and crack_level == 0:
-		base_color = base_color.lerp(Color(0.85, 0.95, 1.0, 0.35), approach_intensity * 0.6)
+		base_color = base_color.lerp(Color(0.8, 0.95, 1.0, 0.2), approach_intensity * 0.5)
 
+	# Fill seamless ice sheet without drawing harsh square tile box borders
 	draw_rect(rect, base_color, true)
-	draw_rect(rect, COLOR_ICE_BORDER, false, 1.5)
 
-	# Glass Refraction Sheen Highlight
+	# Subtle glass sheen accent
 	var half := tile_size / 2.0
-	draw_line(-half + Vector2(6, 6), -half + Vector2(30, 6), COLOR_GLASS_SHEEN, 2.0)
-	draw_line(-half + Vector2(6, 6), -half + Vector2(6, 30), COLOR_GLASS_SHEEN, 2.0)
+	if crack_level == 0 and not is_approaching:
+		draw_line(-half + Vector2(10, 10), -half + Vector2(35, 10), COLOR_GLASS_SHEEN, 1.5)
 
 	# Dynamic proximity warning glow & hairline stress preview as train approaches
 	if is_approaching and not is_broken:
