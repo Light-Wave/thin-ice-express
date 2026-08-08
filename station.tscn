@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://s8901234station"]
+[gd_scene format=3 uid="uid://kn7qc48onk6t"]
 
 [ext_resource type="Script" path="res://station.gd" id="1_station"]
 
