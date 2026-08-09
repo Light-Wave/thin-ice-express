@@ -167,7 +167,7 @@ func break_ice() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.is_in_group("train") or body is CharacterBody2D:
+	if body.is_in_group("train") or body is CharacterBody2D or body is RigidBody2D:
 		if not active_bodies.has(body):
 			active_bodies.append(body)
 		
@@ -182,11 +182,11 @@ func _on_body_entered(body: Node2D) -> void:
 				crack_timer = 0.0
 				advance_crack()
 				if body.has_method("apply_passenger_bump"):
-					body.apply_passenger_bump(8.0, "ICE BUMP!")
+					body.apply_passenger_bump(8.0 + crack_level * 4.0, "ICE BUMP!")
 
 
 func _on_body_exited(body: Node2D) -> void:
-	if body.is_in_group("train") or body is CharacterBody2D:
+	if body.is_in_group("train") or body is CharacterBody2D or body is RigidBody2D:
 		active_bodies.erase(body)
 		if active_bodies.is_empty():
 			train_on_tile = false
