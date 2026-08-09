@@ -8,7 +8,7 @@ signal ice_cracked(crack_level: int)
 signal ice_broken
 
 @export var max_cracks: int = 3
-@export var time_between_cracks: float = 2.5 ## Seconds train must remain on tile before cracking further (for slow driver comfort)
+@export var time_between_cracks: float = 1.5 ## Seconds train must remain on tile before cracking further (for slow driver comfort)
 @export var tile_size: Vector2 = Vector2(96, 96)
 
 
@@ -176,13 +176,10 @@ func _on_body_entered(body: Node2D) -> void:
 
 		if is_broken:
 			if body.has_method("apply_passenger_bump"):
-				body.apply_passenger_bump(25.0, "SPLASH WATER!")
+				body.apply_passenger_bump(25.0, "WATER SPLASH!")
 		else:
-			if is_first_body:
-				crack_timer = 0.0
-				advance_crack()
-				if body.has_method("apply_passenger_bump"):
-					body.apply_passenger_bump(8.0 + crack_level * 4.0, "ICE BUMP!")
+			if body.has_method("apply_passenger_bump") && crack_level > 0:
+				body.apply_passenger_bump(crack_level * 4, "ICE BUMP!")
 
 
 func _on_body_exited(body: Node2D) -> void:

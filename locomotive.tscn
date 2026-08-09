@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://dh3jjixd5xt0b"]
 
-[ext_resource type="Script" uid="uid://ltf6v0ij7g0n" path="res://locomotive.gd" id="1_us4ex"]
+[ext_resource type="Script" path="res://locomotive.gd" id="1_us4ex"]
+[ext_resource type="Texture2D" uid="uid://m31cfapo1gay" path="res://icon.svg" id="2_yk08p"]
+[ext_resource type="Script" path="res://locomotive_visuals.gd" id="3_g3tdi"]
+[ext_resource type="PackedScene" uid="uid://baa01234arrow" path="res://steering_arrow.tscn" id="3_arrow"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yk08p"]
 size = Vector2(113, 50)
@@ -16,3 +19,8 @@ shape = SubResource("RectangleShape2D_yk08p")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128938741]
 position_smoothing_enabled = true
 position_smoothing_speed = 5.0
+
+[node name="Visuals" type="Node2D" parent="." unique_id=534509805]
+script = ExtResource("3_g3tdi")
+
+[node name="SteeringArrow" parent="." instance=ExtResource("3_arrow")]
