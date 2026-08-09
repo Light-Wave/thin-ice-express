@@ -18,6 +18,7 @@ enum TrainType {
 @export var jolt_sensitivity := 0.05 ## Sensitivity for sharp turns causing passenger bumps
 @export var lateral_ice_drag_coefficient: float = 6.0 ## Gentle lateral dampening resisting sideways slide on ice
 @export var opposite_drag_drift_force: float = 180.0 ## Opposite side drag force when turning on ice
+@export var bump_penalty_multiplier := 0.3
 
 var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI
@@ -53,6 +54,7 @@ func set_train_type(type: TrainType) -> void:
 			max_speed = 350.0
 			engine_force = 1800.0
 	queue_redraw()
+	$Visuals.queue_redraw()
 
 
 func _physics_process(delta: float) -> void:
@@ -112,7 +114,7 @@ func _physics_process(delta: float) -> void:
 
 ## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
 func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
-	var final_amount := amount
+	var final_amount := amount * bump_penalty_multiplier
 	if not passenger_ui:
 		passenger_ui = get_node_or_null("../PassengerUI") as PassengerUI
 		if not passenger_ui:

@@ -13,7 +13,7 @@ var passenger_ui: CanvasLayer
 
 func _ready() -> void:
 	# Find dependencies in current scene
-	locomotive = get_node_or_null("../Locomotive") as Node2D
+	locomotive = get_node_or_null("../Train/Locomotive") as Node2D
 	ice_generator = get_node_or_null("../IceGenerator") as Node2D
 	passenger_ui = get_node_or_null("../PassengerUI") as CanvasLayer
 
@@ -42,7 +42,9 @@ func load_level(level_num: int) -> void:
 	var level_name := ""
 
 	if not locomotive:
-		locomotive = get_node_or_null("../Locomotive") as Node2D
+		push_error("No locomotive!")
+	if not locomotive.has_method("set_train_type"):
+		push_error("No set_train_type!")
 	if not ice_generator:
 		ice_generator = get_node_or_null("../IceGenerator") as Node2D
 
@@ -50,7 +52,7 @@ func load_level(level_num: int) -> void:
 		1:
 			level_name = "Level 1: The Calm Fjord (Tutorial)"
 			if locomotive:
-				if locomotive.has_method("set_train_type"): locomotive.set_train_type(0) # 0 = Vintage Steam
+				if locomotive.has_method("set_train_type"): locomotive.set_train_type(Locomotive.TrainType.VINTAGE_STEAM) # 0 = Vintage Steam
 				locomotive.bump_penalty_multiplier = 0.3 # 70% penalty discount for tutorial
 			if ice_generator:
 				ice_generator.thin_ice_chance = 0.05
@@ -58,7 +60,7 @@ func load_level(level_num: int) -> void:
 		2:
 			level_name = "Level 2: Pine Forest Crossing"
 			if locomotive:
-				if locomotive.has_method("set_train_type"): locomotive.set_train_type(1) # 1 = X2000 Series
+				if locomotive.has_method("set_train_type"): locomotive.set_train_type(Locomotive.TrainType.X2000_SERIES) # 1 = X2000 Series
 				locomotive.bump_penalty_multiplier = 0.6 # 40% penalty discount for Level 2
 			if ice_generator:
 				ice_generator.thin_ice_chance = 0.20
@@ -66,7 +68,7 @@ func load_level(level_num: int) -> void:
 		3:
 			level_name = "Level 3: Midnight Blizzard Pass"
 			if locomotive:
-				if locomotive.has_method("set_train_type"): locomotive.set_train_type(1) # 1 = X2000 Series
+				if locomotive.has_method("set_train_type"): locomotive.set_train_type(Locomotive.TrainType.X2000_SERIES) # 1 = X2000 Series
 				locomotive.bump_penalty_multiplier = 1.0 # Standard penalty
 			if ice_generator:
 				ice_generator.thin_ice_chance = 0.35
@@ -74,7 +76,7 @@ func load_level(level_num: int) -> void:
 		4:
 			level_name = "Level 4: Fragile Bridge Crossing"
 			if locomotive:
-				if locomotive.has_method("set_train_type"): locomotive.set_train_type(2) # 2 = Bullet Train
+				if locomotive.has_method("set_train_type"): locomotive.set_train_type(Locomotive.TrainType.BULLET_TRAIN) # 2 = Bullet Train
 				locomotive.bump_penalty_multiplier = 1.3
 			if ice_generator:
 				ice_generator.thin_ice_chance = 0.45
@@ -82,7 +84,7 @@ func load_level(level_num: int) -> void:
 		5:
 			level_name = "Level 5: The Dawn Dash (Final Run)"
 			if locomotive:
-				if locomotive.has_method("set_train_type"): locomotive.set_train_type(2) # 2 = Bullet Train
+				if locomotive.has_method("set_train_type"): locomotive.set_train_type(Locomotive.TrainType.BULLET_TRAIN) # 2 = Bullet Train
 				locomotive.bump_penalty_multiplier = 1.5
 			if ice_generator:
 				ice_generator.thin_ice_chance = 0.55
