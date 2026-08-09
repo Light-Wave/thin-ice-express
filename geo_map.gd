@@ -15,7 +15,7 @@ var sample_timer: float = 0.0
 
 
 func _ready() -> void:
-	player_train = get_node_or_null("../Locomotive") as Node2D
+	player_train = _find_player_train()
 	if player_train:
 		path_history.append(player_train.global_position)
 		
@@ -24,10 +24,22 @@ func _ready() -> void:
 		station_world_pos = nav_node.station_position
 
 
+func _find_player_train() -> Node2D:
+	var t := get_node_or_null("../Train/Locomotive") as Node2D
+	if not t:
+		t = get_node_or_null("../Locomotive") as Node2D
+	if not t and get_tree():
+		var group_nodes := get_tree().get_nodes_in_group("train")
+		if not group_nodes.is_empty():
+			t = group_nodes[0] as Node2D
+	return t
+
+
 func _process(delta: float) -> void:
-	if not player_train:
-		player_train = get_node_or_null("../Locomotive") as Node2D
-		return
+	if not player_train or not is_instance_valid(player_train):
+		player_train = _find_player_train()
+		if not player_train:
+			return
 
 	var nav_node = get_node_or_null("../StationNavigation")
 	if nav_node and "station_position" in nav_node:

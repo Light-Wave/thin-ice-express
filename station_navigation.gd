@@ -25,7 +25,7 @@ var anim_time: float = 0.0
 
 
 func _ready() -> void:
-	player_train = get_node_or_null("../Locomotive") as Node2D
+	player_train = _find_player_train()
 	level_manager = get_node_or_null("../LevelManager")
 	
 	if distance_label:
@@ -45,16 +45,28 @@ func _ready() -> void:
 		level_manager.level_changed.connect(_on_level_changed)
 
 
+func _find_player_train() -> Node2D:
+	var t := get_node_or_null("../Train/Locomotive") as Node2D
+	if not t:
+		t = get_node_or_null("../Locomotive") as Node2D
+	if not t and get_tree():
+		var group_nodes := get_tree().get_nodes_in_group("train")
+		if not group_nodes.is_empty():
+			t = group_nodes[0] as Node2D
+	return t
+
+
 func get_distance_for_level(level_num: int) -> float:
-	# Level 1 Tutorial: 250m. Successive levels grow progressively (+250m per level)
+	# Level 1 Tutorial: 250m. Successive levels grow by +250m per level
 	return 250.0 + (level_num - 1) * 250.0
 
 
 func _process(delta: float) -> void:
 	anim_time += delta
-	if not player_train:
-		player_train = get_node_or_null("../Locomotive") as Node2D
-		return
+	if not player_train or not is_instance_valid(player_train):
+		player_train = _find_player_train()
+		if not player_train:
+			return
 
 	var dist := player_train.global_position.distance_to(station_position)
 	var dist_meters := int(dist / 10.0)
