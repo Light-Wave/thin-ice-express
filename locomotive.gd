@@ -86,19 +86,6 @@ func _physics_process(delta: float) -> void:
 
 	# Lateral Ice Drag & Opposite Side Drift Drag Physics
 	var speed := linear_velocity.length()
-	if speed > 5.0:
-		# Decompose velocity into right vector (lateral slide)
-		var right_vec := transform.y
-		var lateral_vel_mag := linear_velocity.dot(right_vec)
-		
-		# Gentle lateral drag force opposing sideways drift
-		var lateral_drag := -right_vec * lateral_vel_mag * lateral_ice_drag_coefficient * mass
-		apply_central_force(lateral_drag)
-		
-		# Subtle drag force pushing to opposite side when turning on ice
-		if absf(steering) > 0.05:
-			var opposite_drag := -right_vec * (steering * opposite_drag_drift_force * mass)
-			apply_central_force(opposite_drag)
 
 	# Passenger bump from sharp turns
 	if absf(steering) > 0.1 and speed > 100.0:
@@ -125,7 +112,7 @@ func _physics_process(delta: float) -> void:
 
 ## Apply passenger bump/jolt to PassengerUI with visual bounce and floating text popup
 func apply_passenger_bump(amount: float, reason: String = "BUMP!") -> void:
-	var final_amount := amount * bump_penalty_multiplier
+	var final_amount := amount
 	if not passenger_ui:
 		passenger_ui = get_node_or_null("../PassengerUI") as PassengerUI
 		if not passenger_ui:

@@ -100,7 +100,7 @@ func _draw_bullet_wagon() -> void:
 	draw_rect(Rect2(-48, -10, 76, 7), Color(0.1, 0.15, 0.25), true)
 
 func apply_passenger_bump(amount: float, reason:String = "") -> void:
-	var final_amount := amount * locomotive.bump_penalty_multiplier
+	var final_amount := amount
 	if locomotive.passenger_ui:
 		locomotive.passenger_ui.apply_jolt(final_amount)
 

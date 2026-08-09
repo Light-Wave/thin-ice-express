@@ -110,10 +110,6 @@ func _setup_station(player_start_pos: Vector2) -> void:
 	station_position = player_start_pos + Vector2(0, -dist_units)
 	start_distance = dist_units
 	level_completed = false
-	
-	var station_node := get_node_or_null("../TrainStation") as Node2D
-	if station_node:
-		station_node.global_position = station_position
 
 	# Position visual TrainStation building node
 	var station_node := get_node_or_null("../TrainStation") as Node2D
