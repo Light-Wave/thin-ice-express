@@ -105,11 +105,16 @@ func _process(delta: float) -> void:
 
 
 func _setup_station(player_start_pos: Vector2) -> void:
-	# Place station at the furthest turn ahead along the icy lake valley path
+	# Place station at the furthest turn ahead along the icy lake valley path (250m tutorial distance)
 	var dist_units := station_distance_meters * 10.0
 	station_position = player_start_pos + Vector2(0, -dist_units)
 	start_distance = dist_units
 	level_completed = false
+
+	# Position visual TrainStation building node
+	var station_node := get_node_or_null("../TrainStation") as Node2D
+	if station_node:
+		station_node.global_position = station_position
 
 	# Sync GeoMap station position if present
 	var geo_map = get_node_or_null("../GeoMap")
