@@ -110,25 +110,36 @@ func _draw() -> void:
 			_draw_level5_dawn_dash_overlay(screen_size)
 
 
-## Render Large Open Icy Field Grid & Snow Drift Lines following train motion
+## Render Large Open Frozen Ice Field Sheet & Snow Drift Lines following train motion
 func _draw_icy_field_tract(screen_size: Vector2, train_p: Vector2) -> void:
-	var field_color := Color(0.8, 0.92, 1.0, 0.08) # Subtle translucent ice grid
+	# 1. Continuous Crystalline Ice Field Tint across screen
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.65, 0.88, 1.0, 0.1), true)
+
+	# 2. Infinite Scrolling Ice Tract Lines & Frost Shimmer
+	var field_line_color := Color(0.75, 0.92, 1.0, 0.12)
 	var grid_step := 128.0
 	
-	var offset_x: float = fmod(-train_p.x, grid_step)
-	var offset_y: float = fmod(-train_p.y, grid_step)
+	var offset_x: float = fmod(-train_p.x * 0.5, grid_step)
+	var offset_y: float = fmod(-train_p.y * 0.5, grid_step)
 	
 	# Horizontal icy field lines
 	var y: float = offset_y
 	while y < screen_size.y:
-		draw_line(Vector2(0, y), Vector2(screen_size.x, y), field_color, 1.5)
+		draw_line(Vector2(0, y), Vector2(screen_size.x, y), field_line_color, 1.5)
 		y += grid_step
 
 	# Vertical icy field lines
 	var x: float = offset_x
 	while x < screen_size.x:
-		draw_line(Vector2(x, 0), Vector2(x, screen_size.y), field_color, 1.5)
+		draw_line(Vector2(x, 0), Vector2(x, screen_size.y), field_line_color, 1.5)
 		x += grid_step
+
+	# Frost shimmer particles floating over ice lake
+	for i in range(12):
+		var shimmer_x: float = fmod(i * 101.0 - train_p.x * 0.2 + anim_time * 10.0, screen_size.x)
+		var shimmer_y: float = fmod(i * 59.0 - train_p.y * 0.2, screen_size.y)
+		var shimmer_alpha: float = 0.25 + sin(anim_time * 2.5 + i) * 0.2
+		draw_circle(Vector2(shimmer_x, shimmer_y), 2.0, Color(1.0, 1.0, 1.0, shimmer_alpha))
 
 
 ## Level 1: The Calm Fjord (Soft Morning Sun Rays & Lake Shimmer)
