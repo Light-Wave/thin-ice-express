@@ -71,4 +71,4 @@ func _draw() -> void:
 	var dist_m := int(train_pos.distance_to(station_pos) / 10.0)
 	var label_node := get_node_or_null("DistanceTextLabel") as Label
 	if label_node:
-		label_node.text = "🗺️ GEO MAP: %d m to Station" % dist_m
+		label_node.text = "%d m to Station" % dist_m

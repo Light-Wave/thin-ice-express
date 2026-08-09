@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://ci4x3n12xc712"]
 
-[ext_resource type="Script" path="res://geo_map.gd" id="1_geomap"]
-[ext_resource type="Script" path="res://geo_map_render.gd" id="2_render"]
+[ext_resource type="Script" uid="uid://cov7wqnq3x0m" path="res://geo_map.gd" id="1_geomap"]
+[ext_resource type="Script" uid="uid://d2xiigys28kxe" path="res://geo_map_render.gd" id="2_render"]
 
-[node name="GeoMap" type="CanvasLayer"]
+[node name="GeoMap" type="CanvasLayer" unique_id=500736583]
 layer = 5
 script = ExtResource("1_geomap")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=2123759487]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,7 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="MapPanel" type="Control" parent="Control"]
+[node name="MapPanel" type="Control" parent="Control" unique_id=241958779]
 custom_minimum_size = Vector2(220, 160)
 layout_mode = 1
 anchors_preset = 3
@@ -33,7 +33,7 @@ grow_vertical = 0
 mouse_filter = 2
 script = ExtResource("2_render")
 
-[node name="DistanceTextLabel" type="Label" parent="Control/MapPanel"]
+[node name="DistanceTextLabel" type="Label" parent="Control/MapPanel" unique_id=171209926]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
