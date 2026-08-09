@@ -23,12 +23,15 @@ func _process(_delta: float) -> void:
 		if not locomotive: return
 
 	# Find station position from StationNavigation if available
-	var nav = get_node_or_null("../../StationNavigation")
+	var nav = get_node_or_null("../../../StationNavigation")
 	if nav and "station_position" in nav:
 		station_position = nav.station_position
+	else:
+		return;
 
 	# Calculate vector to station in world space
 	var to_station := station_position - locomotive.global_position
+	log(to_station.length())
 	var world_angle_to_station := to_station.angle()
 	
 	# Angle relative to locomotive's current facing direction
@@ -37,12 +40,7 @@ func _process(_delta: float) -> void:
 
 	# Determine steering advice
 	var deg := rad_to_deg(relative_angle)
-	if deg > 15.0:
-		current_guidance_text = "STEER RIGHT 🡆"
-	elif deg < -15.0:
-		current_guidance_text = "STEER LEFT 🡄"
-	else:
-		current_guidance_text = "ON TRACK 🡅"
+	current_guidance_text = ""
 
 	queue_redraw()
 
@@ -61,7 +59,7 @@ func _draw() -> void:
 
 	# Draw Rotating Navigation Arrow
 	var arrow_size := 22.0
-	var head_angle := arrow_angle - PI/2.0 # Adjust for top-down orientation
+	var head_angle := arrow_angle 
 	var p_tip := arrow_center + Vector2.RIGHT.rotated(head_angle) * arrow_size
 	var p_left := arrow_center + Vector2.RIGHT.rotated(head_angle + 2.4) * (arrow_size * 0.6)
 	var p_right := arrow_center + Vector2.RIGHT.rotated(head_angle - 2.4) * (arrow_size * 0.6)

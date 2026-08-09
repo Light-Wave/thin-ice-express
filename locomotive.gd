@@ -24,6 +24,7 @@ var prev_velocity := Vector2.ZERO
 var passenger_ui: PassengerUI
 var anim_time: float = 0.0
 var bump_cooldown: float = 0.0
+var lateral_grip := 1.0
 
 
 func _ready() -> void:
@@ -58,8 +59,18 @@ func set_train_type(type: TrainType) -> void:
 		if visuals:
 			visuals.queue_redraw()
 
-
 func _physics_process(delta: float) -> void:
+	
+	var forward := transform.x
+	var sideways := transform.y
+
+	# How much we're moving sideways
+	var lateral_velocity := linear_velocity.dot(sideways)
+
+	# Force opposing sideways movement
+	var lateral_force := -sideways * lateral_velocity * lateral_grip
+
+	apply_central_force(lateral_force)
 	anim_time += delta
 	if bump_cooldown > 0.0:
 		bump_cooldown -= delta

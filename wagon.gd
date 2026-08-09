@@ -3,6 +3,7 @@ class_name TrainWagon
 
 var locomotive_ref: Node2D
 var anim_time: float = 0.0
+var lateral_grip := 1.0
 
 
 @onready var locomotive := get_parent().get_node("Locomotive") as Locomotive
@@ -12,6 +13,16 @@ const FloatingPopupScript = preload("res://floating_popup.gd")
 func _physics_process(delta: float) -> void:
 	if bump_cooldown > 0.0:
 		bump_cooldown -= delta
+	var forward := transform.x
+	var sideways := transform.y
+
+	# How much we're moving sideways
+	var lateral_velocity := linear_velocity.dot(sideways)
+
+	# Force opposing sideways movement
+	var lateral_force := -sideways * lateral_velocity * lateral_grip
+
+	apply_central_force(lateral_force)
 
 func _ready() -> void:
 	add_to_group("train")
