@@ -16,6 +16,7 @@ var crack_level: int = 0
 var is_broken: bool = false
 var train_on_tile: bool = false
 var crack_timer: float = 0.0
+var active_bodies: Array[Node2D] = []
 
 # Animation timers & variables
 var anim_time: float = 0.0
@@ -23,13 +24,20 @@ var wobble_offset := Vector2.ZERO
 var melt_scale: float = 1.0
 var melt_alpha: float = 1.0
 
+# Dynamic Proximity Ahead Detection
+var is_approaching: bool = false
+var approach_intensity: float = 0.0
+var player_train_ref: Node2D
+
 # Color Palette for Ice -> Cracks -> Water
-const COLOR_ICE_BASE := Color(0.7, 0.9, 1.0, 1.0)       # Shiny Ice Blue
-const COLOR_ICE_BORDER := Color(0.9, 0.98, 1.0, 1.0)    # Crisp White Border
-const COLOR_CRACK_LIGHT := Color(0.3, 0.6, 0.8, 1.0)    # Light Crack Lines
-const COLOR_CRACK_HEAVY := Color(0.9, 0.3, 0.3, 1.0)    # Danger Red Cracks
-const COLOR_WATER_BASE := Color(0.1, 0.35, 0.65, 0.85)  # Deep Water Blue
-const COLOR_RIPPLE := Color(0.3, 0.65, 0.9, 0.6)        # Water Ripple
+const COLOR_ICE_BASE := Color(0.75, 0.9, 1.0, 0.15)      # Translucent Glassy Ice Sheet (85% transparent!)
+const COLOR_ICE_BORDER := Color(0.9, 0.98, 1.0, 0.35)    # Subtle Frost Border (65% transparent)
+const COLOR_CRACK_LIGHT := Color(0.3, 0.6, 0.8, 0.9)    # Crisp Light Crack Lines
+const COLOR_CRACK_HEAVY := Color(0.95, 0.3, 0.3, 0.95)  # Vivid Red Danger Cracks
+const COLOR_WATER_BASE := Color(0.1, 0.35, 0.65, 0.75)  # Deep Water Blue
+const COLOR_RIPPLE := Color(0.3, 0.65, 0.9, 0.8)        # Water Ripple
+const COLOR_ICE_GLOW := Color(0.4, 0.85, 1.0, 0.5)      # Proximity Warning Glow
+const COLOR_GLASS_SHEEN := Color(1.0, 1.0, 1.0, 0.25)   # Crystalline Glass Highlight Sheen
 
 
 func _ready() -> void:
@@ -46,6 +54,24 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	anim_time += delta
+
+	# Track train proximity to dynamically change icy path in front of train as it nears
+	if not player_train_ref or not is_instance_valid(player_train_ref):
+		player_train_ref = get_node_or_null("../Train/Locomotive") as Node2D
+		if not player_train_ref:
+			player_train_ref = get_node_or_null("../Locomotive") as Node2D
+
+	if player_train_ref and not is_broken:
+		var dist := global_position.distance_to(player_train_ref.global_position)
+		if dist < 180.0:
+			is_approaching = true
+			approach_intensity = clampf(1.0 - (dist / 180.0), 0.0, 1.0)
+		else:
+			is_approaching = false
+			approach_intensity = 0.0
+	else:
+		is_approaching = false
+		approach_intensity = 0.0
 
 	# Wobble animation if heavily cracked (stage 2)
 	if crack_level == 2 and not is_broken:
@@ -72,29 +98,29 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var rect = Rect2(-tile_size / 2.0 + wobble_offset, tile_size * melt_scale)
+	var half := tile_size / 2.0
 
 	if is_broken:
-		# Draw Deep Water with Animated Ripples
+		# Draw Deep Open Water with Animated Ripples and Splashing Floes
 		draw_rect(rect, COLOR_WATER_BASE, true)
-		
-		# Animated Water Ripples
-		var ripple_radius := fmod(anim_time * 30.0, tile_size.x * 0.4)
+		var ripple_radius := fmod(anim_time * 30.0, tile_size.x * 0.45)
 		draw_arc(wobble_offset, ripple_radius, 0, TAU, 16, COLOR_RIPPLE, 2.0)
 		draw_rect(rect, COLOR_WATER_BASE.darkened(0.2), false, 2.0)
 		return
 
-	# Draw Base Ice Tile Block
-	var base_color := COLOR_ICE_BASE
+	# Draw Base Ice Layer:
+	# Unbroken ice (crack_level == 0) is 100% transparent so high-res top-down frozen lake artwork shines through seamlessly!
 	if crack_level == 1:
-		base_color = COLOR_ICE_BASE.lerp(Color(0.5, 0.8, 0.9), 0.5)
+		draw_rect(rect, Color(0.4, 0.75, 0.95, 0.25), true)
 	elif crack_level == 2:
-		base_color = COLOR_ICE_BASE.lerp(Color(0.8, 0.4, 0.4), 0.4) # Flashes reddish warning
+		draw_rect(rect, Color(0.9, 0.3, 0.3, 0.35), true) # Flashes reddish warning
 
-	draw_rect(rect, base_color, true)
-	draw_rect(rect, COLOR_ICE_BORDER, false, 3.0)
+	# Hairline stress lines forming under approaching engine weight
+	if is_approaching and not is_broken and crack_level == 0:
+		var line_color := Color(0.6, 0.88, 1.0, approach_intensity * 0.7)
+		draw_line(Vector2(-half.x + 15, 0), Vector2(half.x - 15, 0), line_color, 1.5)
 
 	# Draw Crack Lines based on crack level
-	var half := tile_size / 2.0
 	if crack_level >= 1:
 		# Light Crack Lines
 		draw_line(-half + Vector2(10, 10), half - Vector2(20, 10), COLOR_CRACK_LIGHT, 3.0)
@@ -142,8 +168,12 @@ func break_ice() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("train") or body is CharacterBody2D or body is RigidBody2D:
+		if not active_bodies.has(body):
+			active_bodies.append(body)
+		
+		var is_first_body := active_bodies.size() == 1
 		train_on_tile = true
-		crack_timer = 0.0
+
 		if is_broken:
 			if body.has_method("apply_passenger_bump"):
 				body.apply_passenger_bump(25.0, "WATER SPLASH!")
@@ -154,5 +184,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("train") or body is CharacterBody2D or body is RigidBody2D:
-		train_on_tile = false
-		crack_timer = 0.0
+		active_bodies.erase(body)
+		if active_bodies.is_empty():
+			train_on_tile = false
+			crack_timer = 0.0

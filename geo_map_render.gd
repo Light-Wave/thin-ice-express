@@ -44,18 +44,30 @@ func _draw() -> void:
 			map_path.append(center + rel)
 		draw_polyline(map_path, Color(0.95, 0.75, 0.2, 0.8), 2.5)
 
-	# 4. Draw Station Marker (Gold Flag estation)
+	# 4. Draw Station Marker (Gold Station Flag)
 	var rel_station: Vector2 = (station_pos - train_pos) * map_scale
 	var station_map_pos: Vector2 = center + rel_station
+
+	# 5. Draw Connecting Route Graph Line between Train and Station Ahead
+	draw_dashed_line(center, station_map_pos, Color(0.0, 0.85, 1.0, 0.85), 2.5, 6.0)
+	
+	# Graph Waypoint Nodes along the route
+	for step in range(1, 4):
+		var waypoint: Vector2 = center.lerp(station_map_pos, step / 4.0)
+		draw_circle(waypoint, 3.5, Color(0.0, 0.85, 1.0, 0.9))
+
 	if Rect2(Vector2.ZERO, rect_size).has_point(station_map_pos):
 		draw_circle(station_map_pos, 7.0, Color.GOLD)
 		draw_arc(station_map_pos, 10.0, 0, TAU, 12, Color.YELLOW, 2.0)
+	else:
+		var clamped: Vector2 = center + rel_station.normalized() * (minf(rect_size.x, rect_size.y) * 0.45)
+		draw_circle(clamped, 6.0, Color.GOLD)
 
-	# 5. Draw Player Train GPS Marker (Green 🟢)
+	# 6. Draw Player Train GPS Marker (Green 🟢)
 	draw_circle(center, 6.0, Color(0.2, 0.95, 0.4))
 	draw_arc(center, 8.0, 0, TAU, 12, Color.WHITE, 1.5)
 
-	# 6. Live Distance Label
+	# 7. Live Distance Label
 	var dist_m := int(train_pos.distance_to(station_pos) / 10.0)
 	var label_node := get_node_or_null("DistanceTextLabel") as Label
 	if label_node:

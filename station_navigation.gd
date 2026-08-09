@@ -21,10 +21,11 @@ const COLOR_TEXT_GOLD := Color(0.7, 0.5, 0.0, 1.0)    # Dark Gold
 @onready var minimap_panel: Control = $Control/MinimapPanel
 
 
+var anim_time: float = 0.0
+
+
 func _ready() -> void:
-	player_train = get_node_or_null("../Locomotive") as Node2D
-	if not player_train:
-		player_train = get_node_or_null("../Train/Locomotive") as Node2D
+	player_train = _find_player_train()
 	level_manager = get_node_or_null("../LevelManager")
 	
 	if distance_label:
@@ -32,6 +33,11 @@ func _ready() -> void:
 		distance_label.add_theme_color_override("font_outline_color", Color.WHITE)
 		distance_label.add_theme_constant_override("outline_size", 4)
 	
+	var cur_lvl := 1
+	if level_manager and "current_level" in level_manager:
+		cur_lvl = level_manager.current_level
+
+	station_distance_meters = get_distance_for_level(cur_lvl)
 	if player_train:
 		_setup_station(player_train.global_position)
 		
@@ -39,11 +45,26 @@ func _ready() -> void:
 		level_manager.level_changed.connect(_on_level_changed)
 
 
-func _process(_delta: float) -> void:
-	if not player_train:
-		player_train = get_node_or_null("../Locomotive") as Node2D
-		if not player_train:
-			player_train = get_node_or_null("../Train/Locomotive") as Node2D
+func _find_player_train() -> Node2D:
+	var t := get_node_or_null("../Train/Locomotive") as Node2D
+	if not t:
+		t = get_node_or_null("../Locomotive") as Node2D
+	if not t and get_tree():
+		var group_nodes := get_tree().get_nodes_in_group("train")
+		if not group_nodes.is_empty():
+			t = group_nodes[0] as Node2D
+	return t
+
+
+func get_distance_for_level(level_num: int) -> float:
+	# Level 1 Tutorial: 250m. Successive levels grow by +250m per level
+	return 250.0 + (level_num - 1) * 250.0
+
+
+func _process(delta: float) -> void:
+	anim_time += delta
+	if not player_train or not is_instance_valid(player_train):
+		player_train = _find_player_train()
 		if not player_train:
 			return
 
@@ -84,16 +105,28 @@ func _process(_delta: float) -> void:
 
 
 func _setup_station(player_start_pos: Vector2) -> void:
-	# Place visual TrainStation building 1500 units ahead along the Y axis
-	station_position = player_start_pos + Vector2(0, -station_distance_meters)
-	start_distance = station_distance_meters
+	# Place station at the furthest turn ahead along the icy lake valley path (250m tutorial distance)
+	var dist_units := station_distance_meters * 10.0
+	station_position = player_start_pos + Vector2(0, -dist_units)
+	start_distance = dist_units
 	level_completed = false
 	
 	var station_node := get_node_or_null("../TrainStation") as Node2D
 	if station_node:
 		station_node.global_position = station_position
 
+	# Position visual TrainStation building node
+	var station_node := get_node_or_null("../TrainStation") as Node2D
+	if station_node:
+		station_node.global_position = station_position
 
-func _on_level_changed(_num: int, _name: String) -> void:
+	# Sync GeoMap station position if present
+	var geo_map = get_node_or_null("../GeoMap")
+	if geo_map and "station_world_pos" in geo_map:
+		geo_map.station_world_pos = station_position
+
+
+func _on_level_changed(num: int, _name: String) -> void:
+	station_distance_meters = get_distance_for_level(num)
 	if player_train:
 		_setup_station(player_train.global_position)

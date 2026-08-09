@@ -16,6 +16,7 @@ class SimulatedIceTile:
         self.crack_timer = 0.0
         self.cracked_signals = []
         self.broken_signals = 0
+        self.active_bodies_count = 0
 
     def advance_crack(self):
         if self.is_broken:
@@ -30,13 +31,19 @@ class SimulatedIceTile:
         self.broken_signals += 1
 
     def on_body_entered(self):
+        self.active_bodies_count += 1
+        is_first = (self.active_bodies_count == 1)
         self.train_on_tile = True
-        self.crack_timer = 0.0
-        self.advance_crack()
+        if is_first:
+            self.crack_timer = 0.0
+            self.advance_crack()
 
     def on_body_exited(self):
-        self.train_on_tile = False
-        self.crack_timer = 0.0
+        if self.active_bodies_count > 0:
+            self.active_bodies_count -= 1
+        if self.active_bodies_count == 0:
+            self.train_on_tile = False
+            self.crack_timer = 0.0
 
 def test_ux_crack_progression():
     print("\n[UX Test 1] Testing Crack State & Visual Progression...")
@@ -93,11 +100,38 @@ def test_stress_high_tile_volume():
     print(f"✓ PASS: 10,000 IceTiles created and fully cracked in {elapsed:.2f} ms.")
     return True
 
+def test_ux_multi_wagon_passthrough():
+    print("\n[UX Test 3] Testing Multi-Wagon Train Passthrough...")
+    tile = SimulatedIceTile()
+    # Locomotive enters
+    tile.on_body_entered()
+    # Wagon 1 enters
+    tile.on_body_entered()
+    # Wagon 2 enters
+    tile.on_body_entered()
+    # Wagon 3 enters
+    tile.on_body_entered()
+
+    assert tile.crack_level == 1, f"Expected crack level 1 after train entry, got {tile.crack_level}"
+    assert not tile.is_broken, "Tile broke unexpectedly during normal train passthrough"
+
+    # Train exits body by body
+    tile.on_body_exited()
+    tile.on_body_exited()
+    tile.on_body_exited()
+    tile.on_body_exited()
+
+    assert not tile.train_on_tile, "Tile state should be cleared after all wagons exit"
+    assert tile.active_bodies_count == 0, "Active bodies count should be 0"
+    print("✓ PASS: Multi-wagon train passed over tile safely without instant breaking.")
+    return True
+
 if __name__ == "__main__":
     passed = 0
     tests = [
         test_ux_crack_progression,
         test_ux_signal_emissions,
+        test_ux_multi_wagon_passthrough,
         test_stress_rapid_entry_exit,
         test_stress_boundary_safety,
         test_stress_high_tile_volume,
