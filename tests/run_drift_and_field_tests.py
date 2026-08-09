@@ -11,10 +11,9 @@ def test_background_field_parallax():
     with open("background_graphics.gd", "r") as f:
         code = f.read()
     
-    assert "fmod(-train_pos.x * parallax_factor" in code, "Missing X axis parallax calculation"
-    assert "fmod(-train_pos.y * parallax_factor" in code, "Missing Y axis parallax calculation"
-    assert "_draw_icy_field_tract" in code, "Missing scrolling icy field grid rendering"
-    print("✓ PASS: Background parallax and scrolling icy tract field logic verified.")
+    assert "_draw_pure_frozen_ice_field" in code, "Missing pure frozen ice field ground rendering"
+    assert "fmod(-train_p.x * 0.5" in code, "Missing X axis frozen ground scrolling calculation"
+    print("✓ PASS: Pure frozen ground field scrolling logic verified.")
     return True
 
 def test_ice_path_proximity_changing():

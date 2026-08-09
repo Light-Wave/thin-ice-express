@@ -75,28 +75,10 @@ func _draw() -> void:
 	if screen_size.x <= 0 or screen_size.y <= 0:
 		screen_size = Vector2(1152, 648)
 
-	# Calculate parallax scroll offset based on train position across large icy field
-	var parallax_factor := 0.15
-	var scroll_offset := Vector2(
-		fmod(-train_pos.x * parallax_factor, screen_size.x),
-		fmod(-train_pos.y * parallax_factor, screen_size.y)
-	)
+	# 1. Render Pure Infinite Frozen Ice Field Ground over the whole display
+	_draw_pure_frozen_ice_field(screen_size, train_pos)
 
-	# 1. Render Scrolling High Quality Background Artwork
-	if level_textures.has(current_level) and level_textures[current_level] != null:
-		var overdraw_margin := 80.0
-		var bg_rect := Rect2(
-			Vector2(-overdraw_margin, -overdraw_margin) + scroll_offset * 0.3,
-			screen_size + Vector2(overdraw_margin * 2.0, overdraw_margin * 2.0)
-		)
-		draw_texture_rect(level_textures[current_level], bg_rect, false)
-	else:
-		_draw_procedural_sky(screen_size)
-
-	# 2. Render Scrolling Large Icy Field Tract Surface
-	_draw_icy_field_tract(screen_size, train_pos)
-
-	# 3. Render Plot-Matching Dynamic Atmospheric Overlays
+	# 2. Render Plot-Matching Dynamic Atmospheric Overlays
 	match current_level:
 		1:
 			_draw_level1_calm_fjord_overlay(screen_size)
@@ -110,36 +92,49 @@ func _draw() -> void:
 			_draw_level5_dawn_dash_overlay(screen_size)
 
 
-## Render Large Open Frozen Ice Field Sheet & Snow Drift Lines following train motion
-func _draw_icy_field_tract(screen_size: Vector2, train_p: Vector2) -> void:
-	# 1. Continuous Crystalline Ice Field Tint across screen
-	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.65, 0.88, 1.0, 0.1), true)
+## Render Pure Frozen Ground / Infinite Ice Sheet Field over whole display
+func _draw_pure_frozen_ice_field(screen_size: Vector2, train_p: Vector2) -> void:
+	# Base Frozen Ground Palette: Deep Crystalline Ice Blue Foundation
+	var base_ice := Color(0.12, 0.22, 0.35, 1.0)
+	draw_rect(Rect2(Vector2.ZERO, screen_size), base_ice, true)
 
-	# 2. Infinite Scrolling Ice Tract Lines & Frost Shimmer
-	var field_line_color := Color(0.75, 0.92, 1.0, 0.12)
+	# Glacial Frost Surface Overlay
+	var ice_surface := Color(0.35, 0.65, 0.85, 0.35)
+	draw_rect(Rect2(Vector2.ZERO, screen_size), ice_surface, true)
+
+	# Infinite Scrolling Ice Tract Grid & Crack Pattern
 	var grid_step := 128.0
+	var field_line_color := Color(0.6, 0.85, 1.0, 0.25)
 	
 	var offset_x: float = fmod(-train_p.x * 0.5, grid_step)
 	var offset_y: float = fmod(-train_p.y * 0.5, grid_step)
 	
-	# Horizontal icy field lines
+	# Horizontal frozen ground tract lines
 	var y: float = offset_y
 	while y < screen_size.y:
 		draw_line(Vector2(0, y), Vector2(screen_size.x, y), field_line_color, 1.5)
 		y += grid_step
 
-	# Vertical icy field lines
+	# Vertical frozen ground tract lines
 	var x: float = offset_x
 	while x < screen_size.x:
 		draw_line(Vector2(x, 0), Vector2(x, screen_size.y), field_line_color, 1.5)
 		x += grid_step
 
-	# Frost shimmer particles floating over ice lake
-	for i in range(12):
-		var shimmer_x: float = fmod(i * 101.0 - train_p.x * 0.2 + anim_time * 10.0, screen_size.x)
-		var shimmer_y: float = fmod(i * 59.0 - train_p.y * 0.2, screen_size.y)
-		var shimmer_alpha: float = 0.25 + sin(anim_time * 2.5 + i) * 0.2
-		draw_circle(Vector2(shimmer_x, shimmer_y), 2.0, Color(1.0, 1.0, 1.0, shimmer_alpha))
+	# Diagonal crystalline frost veins on the frozen ground
+	var diag_step := 256.0
+	var diag_offset := fmod((-train_p.x - train_p.y) * 0.3, diag_step)
+	var d: float = diag_offset - diag_step
+	while d < screen_size.x + screen_size.y:
+		draw_line(Vector2(d, 0), Vector2(d - screen_size.y, screen_size.y), Color(0.7, 0.9, 1.0, 0.12), 1.0)
+		d += diag_step
+
+	# Frost shimmer particles floating over frozen ground
+	for i in range(25):
+		var shimmer_x: float = fmod(i * 101.0 - train_p.x * 0.2 + anim_time * 12.0, screen_size.x)
+		var shimmer_y: float = fmod(i * 59.0 - train_p.y * 0.2 + sin(anim_time + i) * 10.0, screen_size.y)
+		var shimmer_alpha: float = 0.3 + sin(anim_time * 3.0 + i) * 0.25
+		draw_circle(Vector2(shimmer_x, shimmer_y), 2.5, Color(0.9, 0.98, 1.0, shimmer_alpha))
 
 
 ## Level 1: The Calm Fjord (Soft Morning Sun Rays & Lake Shimmer)

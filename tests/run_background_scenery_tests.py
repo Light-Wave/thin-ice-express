@@ -31,15 +31,12 @@ def test_background_graphics_script_mapping():
     with open(script_path, "r") as f:
         content = f.read()
 
-    for lvl in range(1, 6):
-        assert f"level_{lvl}_" in content, f"Missing level_{lvl} texture mapping in script"
-    
-    assert "draw_texture_rect" in content, "Missing texture rendering logic in script"
+    assert "_draw_pure_frozen_ice_field" in content, "Missing pure frozen ice field ground rendering"
     assert "_draw_level1_calm_fjord_overlay" in content, "Missing level 1 overlay"
     assert "_draw_level3_blizzard_pass_overlay" in content, "Missing level 3 overlay"
     assert "_draw_level5_dawn_dash_overlay" in content, "Missing level 5 overlay"
 
-    print("✓ PASS: background_graphics.gd correctly maps all 5 level plots and atmospheric overlays.")
+    print("✓ PASS: background_graphics.gd correctly renders pure frozen ground field across whole display.")
     return True
 
 if __name__ == "__main__":
