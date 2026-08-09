@@ -98,45 +98,27 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var rect = Rect2(-tile_size / 2.0 + wobble_offset, tile_size * melt_scale)
+	var half := tile_size / 2.0
 
 	if is_broken:
-		# Draw Deep Water with Animated Ripples
+		# Draw Deep Open Water with Animated Ripples and Splashing Floes
 		draw_rect(rect, COLOR_WATER_BASE, true)
-		
-		# Animated Water Ripples
-		var ripple_radius := fmod(anim_time * 30.0, tile_size.x * 0.4)
+		var ripple_radius := fmod(anim_time * 30.0, tile_size.x * 0.45)
 		draw_arc(wobble_offset, ripple_radius, 0, TAU, 16, COLOR_RIPPLE, 2.0)
 		draw_rect(rect, COLOR_WATER_BASE.darkened(0.2), false, 2.0)
 		return
 
-	# Draw Base Ice Tile (Seamless frozen lake bed rendering)
-	var base_color := COLOR_ICE_BASE
+	# Draw Base Ice Layer:
+	# Unbroken ice (crack_level == 0) is 100% transparent so high-res top-down frozen lake artwork shines through seamlessly!
 	if crack_level == 1:
-		base_color = Color(0.4, 0.7, 0.9, 0.25)
+		draw_rect(rect, Color(0.4, 0.75, 0.95, 0.25), true)
 	elif crack_level == 2:
-		base_color = Color(0.85, 0.35, 0.35, 0.35) # Flashes reddish warning
+		draw_rect(rect, Color(0.9, 0.3, 0.3, 0.35), true) # Flashes reddish warning
 
-	# Dynamic visual shift as train nears the icy path ahead
-	if is_approaching and crack_level == 0:
-		base_color = base_color.lerp(Color(0.8, 0.95, 1.0, 0.2), approach_intensity * 0.5)
-
-	# Fill seamless ice sheet without drawing harsh square tile box borders
-	draw_rect(rect, base_color, true)
-
-	# Subtle glass sheen accent
-	var half := tile_size / 2.0
-	if crack_level == 0 and not is_approaching:
-		draw_line(-half + Vector2(10, 10), -half + Vector2(35, 10), COLOR_GLASS_SHEEN, 1.5)
-
-	# Dynamic proximity warning glow & hairline stress preview as train approaches
-	if is_approaching and not is_broken:
-		var glow_color := COLOR_ICE_GLOW
-		glow_color.a = approach_intensity * 0.6
-		draw_rect(rect, glow_color, false, 3.0 + sin(anim_time * 10.0) * 1.5)
-		
-		# Hairline stress lines forming under approaching engine weight
-		var line_color := Color(0.5, 0.8, 1.0, approach_intensity * 0.8)
-		draw_line(Vector2(-half.x + 20, 0), Vector2(half.x - 20, 0), line_color, 1.5)
+	# Hairline stress lines forming under approaching engine weight
+	if is_approaching and not is_broken and crack_level == 0:
+		var line_color := Color(0.6, 0.88, 1.0, approach_intensity * 0.7)
+		draw_line(Vector2(-half.x + 15, 0), Vector2(half.x - 15, 0), line_color, 1.5)
 
 	# Draw Crack Lines based on crack level
 	if crack_level >= 1:
