@@ -53,8 +53,10 @@ func set_train_type(type: TrainType) -> void:
 		TrainType.BULLET_TRAIN:
 			max_speed = 350.0
 			engine_force = 1800.0
-	queue_redraw()
-	$Visuals.queue_redraw()
+	for child in get_parent().get_children():
+		var visuals := child.get_node_or_null("Visuals") as Node2D
+		if visuals:
+			visuals.queue_redraw()
 
 
 func _physics_process(delta: float) -> void:
